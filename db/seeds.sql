@@ -6,7 +6,7 @@ VALUES
   ('Finance'),
   ('Legal');
   
-INSERT INTO roles (title, salary)
+INSERT INTO roles (title, salary, department)
 VALUES
   ('Service', '80000', 'Admin'),
   ('Salesperson', '100000', 'Sales'),
@@ -22,7 +22,7 @@ VALUES
   ('Lawyer', '80000', 'Legal');
   ('Analyst', '80000', 'Legal');
   
-INSERT INTO employee (first_name, last_name, manager, email)
+INSERT INTO employees (first_name, last_name, manager, email)
 VALUES
   ('James', 'Fraser', 'Jack London', 'jf@goldenbough.edu'),
   ('Jack', 'London', 'Emil Zola', 'jlondon@ualaska.edu'),
