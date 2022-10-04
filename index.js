@@ -1,6 +1,5 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql'); 
-// const {writeFile} = require('./utils/generatedb');
 const fs = require('fs'); 
 
 // capture user input answering inquirer prompts
@@ -33,23 +32,79 @@ const promptUser = () => {
             {
                 viewAllEmp();
             }
+            else if (res.start === 'View all employees by department')
+            {
+                viewAllEmpDept();
+            }
+            else if (res.start === 'View all employees by manager')
+            {
+                viewAllEmpMgr();
+            }
             else if (res.start === 'Add employee')
             {
                 addEmp();
+            }
+            else if (res.start === 'Remove employee')
+            {
+                removeEmp();
+            }
+            else if (res.start === 'Update employee role')
+            {
+                updateRole();
+            }
+            else if (res.start === 'Update manager')
+            {
+                updateMgr();
+            }
+            else if (res.start === 'View all roles')
+            {
+                viewAllRoles();
+            }
+            else if (res.start === 'Add role')
+            {
+                addRole();
+            }
+            else if (res.start === 'Remove role')
+            {
+                removeRole();
+            }
+            else if (res.start === 'View all departments')
+            {
+                viewAllDept();
             }
             else if (res.start === 'Add department')
             {
                 addDept();
             }
-        });
+            else if (res.start === 'Remove department')
+            {
+                removeDept();
+            }
+            else if (res.start === 'View total payroll by department')
+            {
+                viewTotalPayrollByDept();
+            }
+            else if (res.start === 'Quit')
+            {
+                quit();
+            }
+        })
+    ]);
+};
 
-        function viewAllEmp()
-        {
-            //mysql inputs, SELECT query
-        }
+function viewAllEmp() {
+    db.query(`SELECT * FROM employees`, (err, row) => {
+    if (err) {
+        console.log(err);
+    }
+    console.log(row);
+});
+};
+
 
         function addEmp()
         {
+
             inquirer.prompt([
                 {
                     type: 'input',
