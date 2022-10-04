@@ -1,0 +1,27 @@
+{
+  "name": "employee-manager-db",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "jest",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Abi-Queen/Employee-Manager-DB.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Abi-Queen/Employee-Manager-DB/issues"
+  },
+  "homepage": "https://github.com/Abi-Queen/Employee-Manager-DB#readme",
+  "devDependencies": {
+    "jest": "^29.1.2"
+  }
+}
