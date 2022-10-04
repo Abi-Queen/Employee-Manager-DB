@@ -100,6 +100,62 @@ function viewAllEmp() {
     console.log(row);
 });
 };
+function removeEmp() {
+    db.query(`DELETE FROM employees WHERE id = ?`, (err, row) => {
+        if(err) {
+            console.log(err);
+        }
+        console.log(result);
+    });
+};
+function addEmp() {
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'addEmpLN',
+            message: 'What is employee last name?',
+            validate: addEmpLNInput => {
+                if (addEmpLNInput) {
+                    return true;
+                } else {
+                    console.log('A name is needed');
+                    return false;
+                }
+            },
+            type: 'input',
+            name: 'addEmpFN',
+            message: 'What is employee first name?',
+            validate: addEmpFNInput => {
+                if (addEmpFNInput) {
+                    return true;
+                } else {
+                    console.log('A name is needed');
+                    return false;
+                }
+            },
+            type: 'input',
+            name: 'addEmpEmail',
+            message: 'What is employee email?'
+        }
+    ]).then(function(addEmpRes){
+        const sql = `INSERT INTO employees (id, last_name, first_name, email)
+        VALUES (?,?,?,?)`;
+        const params = [1, addEmpLNInput, addEmpFNInput, addEmpEmailInput];
+        db.query(sql, params, (err, result) => {
+            if(err) {
+                console.log(err);
+            }
+            console.log(result);
+        });
+        },
+    
+        // mysql query
+        // `insert into values (${last_name}, )
+    }
+    // chain a .then with response from db, if success, send back to menu above
+        }
+    ])
+}
 
 
         function addEmp()
@@ -110,20 +166,7 @@ function viewAllEmp() {
                     type: 'input',
                     name: 'addEmpLN',
                     message: 'What is employee last name?',
-                    validate: addEmpLNInput => {
-                        if (addEmpLNInput) {
-                            return true;
-                        } else {
-                            console.log('A name is needed');
-                            return false;
-                        }
-                    }
-                },
-            ]).then(function(addEmpLNRes){
-                // mysql query
-                // `insert into values (${last_name}, )
-            }) 
-            // chain a .then with response from db, if success, send back to menu above
+
 
                 //mysql inputs
         };
