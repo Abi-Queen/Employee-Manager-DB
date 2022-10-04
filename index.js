@@ -3,7 +3,6 @@ const mysql = require('mysql');
 const fs = require('fs'); 
 
 // capture user input answering inquirer prompts
-
 const promptUser = () => {
     return inquirer.prompt([
         {
@@ -94,20 +93,158 @@ const promptUser = () => {
 
 function viewAllEmp() {
     db.query(`SELECT * FROM employees`, (err, row) => {
-    if (err) {
-        console.log(err);
+        if (err) {
+            console.log(err);
+        }
+        console.log(row);
     }
-    console.log(row);
-});
+    );
+    promptUser();
 };
+
+function viewAllEmpDept() {
+    inquirer.prompt([
+        {
+            type: 'list',
+            name: 'allEmpChooseDept',
+            message: 'Which department? (use arrow keys)',
+            choices: [
+                'Admin',
+                'Sales',
+                'Engineering',
+                'Finance',
+                'Legal'
+            ]
+            }.then(function(res){
+                if(res.allEmpChooseDept === 'Admin')
+                {
+                    viewAllEmpAdmin();
+                }
+                else if (res.allEmpChooseDept === 'Sales')
+                {
+                    viewAllEmpSales();
+                }
+                else if (res.allEmpChooseDept === 'Legal')
+                {
+                    viewAllEmpLegal();
+                }
+                else if (res.allEmpChooseDept === 'Engineering')
+                {
+                    viewAllEmpEng();
+                }
+                else if (res.allEmpChooseDept === 'Finance')
+                {
+                    viewAllEmpFin();
+                }
+            })
+        ].then(promptUser())
+    );
+};
+
+function viewAllEmpMgr() {
+    inquirer.prompt([
+        {
+            type: 'list',
+            name: 'allEmpChooseMgr',
+            message: 'Which manager? (use arrow keys)',
+            choices: [
+                'Hillary Clinton',
+                'Rosa Parks',
+                'Harriet Tubman',
+                'Eleanor Roosevelt',
+                'Abigail Adams'
+            ]
+            }.then(function(res){
+                if(res.allEmpChooseDept === 'Hillary Clinton')
+                {
+                    viewAllEmpAdmin();
+                }
+                else if (res.allEmpChooseDept === 'Rosa Parks')
+                {
+                    viewAllEmpSales();
+                }
+                else if (res.allEmpChooseDept === 'Harriet Tubman')
+                {
+                    viewAllEmpLegal();
+                }
+                else if (res.allEmpChooseDept === 'Eleanor Roosevelt')
+                {
+                    viewAllEmpEng();
+                }
+                else if (res.allEmpChooseDept === 'Abigail Adams')
+                {
+                    viewAllEmpFin();
+                }
+            })
+        ].then(promptUser())
+    );
+};
+
+//view employees by dept functions
+function viewAllEmpAdmin() {
+    db.query(`SELECT * FROM employees WHERE dept_id = 1`, (err, row) => {
+        if(err) {
+            console.log(err);
+        }
+        console.log(row);
+    });
+    //need to return to prompt for these?
+};
+function viewAllEmpSales() {
+    db.query(`SELECT * FROM employees WHERE dept_id = 2`, (err, row) => {
+        if(err) {
+            console.log(err);
+        }
+        console.log(row);
+    });
+};
+function viewAllEmpEngineering() {
+    db.query(`SELECT * FROM employees WHERE dept_id = 3`, (err, row) => {
+        if(err) {
+            console.log(err);
+        }
+        console.log(row);
+    });
+};
+function viewAllEmpFin() {
+    db.query(`SELECT * FROM employees WHERE dept_id = 4`, (err, row) => {
+        if(err) {
+            console.log(err);
+        }
+        console.log(row);
+    });
+};
+function viewAllEmpLegal() {
+    db.query(`SELECT * FROM employees WHERE dept_id = 5`, (err, row) => {
+        if(err) {
+            console.log(err);
+        }
+        console.log(row);
+    });
+};
+
+function viewAllDept() {
+    db.query(`SELECT * FROM departments`, (err, row) => {
+        if(err) {
+            console.log(err);
+        }
+        console.log(row);
+    }
+    );
+    promptUser();
+};
+
 function removeEmp() {
-    db.query(`DELETE FROM employees WHERE id = ?`, (err, row) => {
+    db.query(`DELETE FROM employees WHERE id = ?`, (err, result) => {
         if(err) {
             console.log(err);
         }
         console.log(result);
-    });
+    }
+    );
+    promptUser();
 };
+
 function addEmp() {
     inquirer.prompt([
         {
@@ -138,6 +275,7 @@ function addEmp() {
             message: 'What is employee email?'
         }
     ]).then(function(addEmpRes){
+        // addEmpRes???
         const sql = `INSERT INTO employees (id, last_name, first_name, email)
         VALUES (?,?,?,?)`;
         const params = [1, addEmpLNInput, addEmpFNInput, addEmpEmailInput];
@@ -148,90 +286,52 @@ function addEmp() {
             console.log(result);
         });
         },
-    
-        // mysql query
-        // `insert into values (${last_name}, )
-    }
-    // chain a .then with response from db, if success, send back to menu above
-        }
-    ])
-}
+        // `insert into values (${last_name}, ) ???
+        );
+    promptUser();
+};
 
-
-        function addEmp()
-        {
-
-            inquirer.prompt([
-                {
-                    type: 'input',
-                    name: 'addEmpLN',
-                    message: 'What is employee last name?',
-
-
-                //mysql inputs
-        };
-
-        function addDept(){
-            inquirer.prompt([
-                {
-                    type: 'input',
-                    message: 'What is the name of the department?',
-
-                }
-
-            ]).then(function(deptRes){
-                //INSEERT query here
-                //`INSERT into departments VALUES (${dept_name}, )
-            })
-        }
-        // only list prompt first, then if choices .then with promises, separate functions for each options; eg for each list choice
+function addDept() {
+    inquirer.prompt([
         {
             type: 'input',
-            name: 'addEmpFirstName',
-            message: 'What is employee first name?',
-            validate: addEmpFirstNameInput => {
-                if (addEmpFirstNameInput) {
+            name: 'addDeptName',
+            message: 'What is the name of the department?',
+            validate: addDeptNameInput => {
+                if (addDeptNameInput) {
                     return true;
                 } else {
                     console.log('A name is needed');
                     return false;
                 }
-            }
-        },
-        {
+            },
             type: 'input',
-            name: 'addEmployeeLastName',
-            message: 'What is employee last name?',
-            validate: addEmployeeLastNameInput => {
-                    if (addEmployeeLastNameInput) {
-                        return true;
-                    } else {
-                        console.log('A name is needed');
-                        return false;
-                    }
+            name: 'addDeptMgr',
+            message: 'Who is the manager of the department?',
+            validate: addDeptMgrInput => {
+                if (addDeptMgrInput) {
+                    return true;
+                } else {
+                    console.log('A name is needed');
+                    return false;
                 }
-        },
-        {
-            type: 'input',
-            name: 'addEmployeeRole',
-            message: 'What is employee role?'
-        },
-        {
-            type: 'input',
-            name: 'addEmployeeManager',
-            message: 'Who is employee manager?'
-        },
-        {
-            type: 'list',
-            name: 'updateEmployeeRole',
-            message: 'Whose role do you want to update? (use arrow keys)',
-            choices: ['']
+            },
         }
-    ])
+    ]).then(function(addDeptRes){
+        // addDeptRes???
+        const sql = `INSERT INTO departments (id, name, manager)
+        VALUES (?,?,?)`;
+        const params = [1, addDeptNameInput, addDeptMgrInput];
+        db.query(sql, params, (err, result) => {
+            if(err) {
+                console.log(err);
+            }
+            console.log(result);
+        });
+        },
+        // `insert into values (${last_name}, ) ???
+        );
+    promptUser();
 };
 
-promptUser()
-.then(dbInputs => {
-    fs.writeFileSync('./db.json', generateDb(dbInput), 'text');
-});
 
