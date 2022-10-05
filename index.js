@@ -1,6 +1,7 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql'); 
 const fs = require('fs'); 
+const db = require('./db/connection');
 
 // capture user input answering inquirer prompts
 const promptUser = () => {
@@ -235,7 +236,50 @@ function viewAllDept() {
 };
 
 function removeEmp() {
-    db.query(`DELETE FROM employees WHERE id = ?`, (err, result) => {
+    inquirer.prompt([
+        {
+            type: 'list',
+            name: 'removeEmpChoose',
+            message: 'Which employee would you like to remove? (use arrow keys)',
+            choices: [
+                // how to get these choices from current table vs. hard coded? list by id? by ? (query)? write a function to generate list items from column?
+                'Puck Sprite',
+                'Buzz Lightyear',
+                'Lighthing McQueen',
+                'Donald Duck',
+                'Bugs Bunny',
+                'Elmer Fudd',
+                'Mike Mulligan',
+                'Peter Rabbit',
+                'Octavian Caesar Augustus',
+                'Julius Caesar'
+            ]
+            }.then(function(res){
+                if(res.removeEmpChoose === 'Puck Sprite')
+                {
+                    removeEmpPuck();
+                }
+                else if (res.removeEmpChoose === 'Buzz Lightyear')
+                {
+                    removeEmpBuzz();
+                }
+            })
+        ].then(promptUser())
+    );
+    promptUser();
+};
+function removeEmpPuck() {
+    db.query(`DELETE FROM employees WHERE first_name = Puck`, (err, result) => {
+        if(err) {
+            console.log(err);
+        }
+        console.log(result);
+    }
+    );
+    promptUser();
+};
+function removeEmpBuzz() {
+    db.query(`DELETE FROM employees WHERE first_name = Buzz`, (err, result) => {
         if(err) {
             console.log(err);
         }
@@ -334,4 +378,92 @@ function addDept() {
     promptUser();
 };
 
-
+function removeDept() {
+    inquirer.prompt([
+        {
+            type: 'list',
+            name: 'removeDeptChoose',
+            message: 'Which department? (use arrow keys)',
+            choices: [
+                'Admin',
+                'Sales',
+                'Engineering',
+                'Finance',
+                'Legal'
+            ]
+            }.then(function(res){
+                if(res.removeDeptChoose === 'Admin')
+                {
+                    removeDeptAdmin();
+                }
+                else if (res.removeDeptChoose === 'Sales')
+                {
+                    removeDeptSales();
+                }
+                else if (res.removeDeptChoose === 'Engineering')
+                {
+                    removeDeptEngineering();
+                }
+                else if (res.removeDeptChoose === 'Finance')
+                {
+                    removeDeptFinance();
+                }
+                else if (res.removeDeptChoose === 'Legal')
+                {
+                    removeDeptLegal();
+                }
+            })
+        ].then(promptUser())
+    );
+    promptUser();
+};
+function removeDeptAdmin() {
+    db.query(`DELETE FROM department WHERE name = Admin`, (err, result) => {
+        if(err) {
+            console.log(err);
+        }
+        console.log(result);
+    }
+    );
+    promptUser();
+};
+function removeDeptSales() {
+    db.query(`DELETE FROM department WHERE name = Sales`, (err, result) => {
+        if(err) {
+            console.log(err);
+        }
+        console.log(result);
+    }
+    );
+    promptUser();
+};
+function removeDeptEngineering() {
+    db.query(`DELETE FROM department WHERE name = Engineering`, (err, result) => {
+        if(err) {
+            console.log(err);
+        }
+        console.log(result);
+    }
+    );
+    promptUser();
+};
+function removeDeptFinance() {
+    db.query(`DELETE FROM department WHERE name = Finance`, (err, result) => {
+        if(err) {
+            console.log(err);
+        }
+        console.log(result);
+    }
+    );
+    promptUser();
+};
+function removeDeptLegal() {
+    db.query(`DELETE FROM department WHERE name = Legal`, (err, result) => {
+        if(err) {
+            console.log(err);
+        }
+        console.log(result);
+    }
+    );
+    promptUser();
+};

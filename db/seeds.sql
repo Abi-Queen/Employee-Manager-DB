@@ -1,10 +1,10 @@
-INSERT INTO departments (name)
+INSERT INTO departments (name, manager)
 VALUES
-  ('Admin'),
-  ('Sales'),
-  ('Engineering'),
-  ('Finance'),
-  ('Legal');
+  ('Admin', 'Hillary Clinton'),
+  ('Sales', 'Rosa Parks'),
+  ('Engineering', 'Harriet Tubman'),
+  ('Finance', 'Eleanor Roosevelt'),
+  ('Legal', 'Abigail Adams');
   
 INSERT INTO roles (title, salary, department)
 VALUES
@@ -24,13 +24,13 @@ VALUES
 
 INSERT INTO employees (first_name, last_name, email)
 VALUES
-  ('Puck', 'Sprite', 'panbody@midsummer.net'),
+  ('Puck', 'Sprite', 'upanddown@midsummer.net'),
   ('Buzz', 'Lightyear', 'beyond@andysroom.com'),
   ('Lightning', 'McQueen', 'thunderhollow@cars.net'),
   ('Donald', 'Duck', 'duckseason@disney.com'),
   ('Bugs', 'Bunny', 'whatsupdoc@looney.net'),
   ('Elmer', 'Fud', 'wascallywabbit@looney.net'),
-  ('Shrek', 'Oger', 'greeny@netscape.com'),
-  ('Puss', 'Boots', 'everafter@boots.com'),
-  ('Octavian', 'Augustus', 'totallynotemperor@rome.com'),
-  ('Julius', 'Caesar', 'friendsinthesenate@rome.com');
+  ('Mike', 'Mulligan', 'maryannesbuddy@popperville.gov'),
+  ('Peter', 'Rabbit', 'inthegardenagain@potterworld.uk'),
+  ('Octavian Caesar', 'Augustus', 'totallynotemperor@rome.com'),
+  ('Julius', 'Caesar', 'gotfriendsinthesenate@rome.com');
