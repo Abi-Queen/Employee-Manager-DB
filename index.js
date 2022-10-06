@@ -143,42 +143,14 @@ function viewAllEmpDept() {
 };
 
 function viewAllEmpMgr() {
-    inquirer.prompt([
-        {
-            type: 'list',
-            name: 'allEmpChooseMgr',
-            message: 'Which manager? (use arrow keys)',
-            choices: [
-                'Hillary Clinton',
-                'Rosa Parks',
-                'Harriet Tubman',
-                'Eleanor Roosevelt',
-                'Abigail Adams'
-            ]
-            }.then(function(res){
-                if(res.allEmpChooseDept === 'Hillary Clinton')
-                {
-                    viewAllEmpAdmin();
-                }
-                else if (res.allEmpChooseDept === 'Rosa Parks')
-                {
-                    viewAllEmpSales();
-                }
-                else if (res.allEmpChooseDept === 'Harriet Tubman')
-                {
-                    viewAllEmpLegal();
-                }
-                else if (res.allEmpChooseDept === 'Eleanor Roosevelt')
-                {
-                    viewAllEmpEng();
-                }
-                else if (res.allEmpChooseDept === 'Abigail Adams')
-                {
-                    viewAllEmpFin();
-                }
-            })
-        ].then(promptUser())
-    );
+    //still working on this one... not sure if it should use group by or desc on mgr id and then fk to display mgr name?
+    db.query(`DISPLAY employees GROUP BY manager_id;`, (err, result) => {
+        if(err) {
+            console.log(err);
+        }
+        console.log(result);
+    });
+    //need to return to prompt for these?
 };
 
 //view employees by dept functions
@@ -242,7 +214,7 @@ function removeEmp() {
             name: 'removeEmpChoose',
             message: 'Which employee would you like to remove? (use arrow keys)',
             choices: [
-                // how to get these choices from current table vs. hard coded? list by id? by ? (query)? write a function to generate list items from column?
+                // how to get these choices from current table vs. hard coded? list by id? by (?,?,?) query function? write a function to generate list items from column?
                 'Puck Sprite',
                 'Buzz Lightyear',
                 'Lighthing McQueen',
@@ -319,7 +291,7 @@ function addEmp() {
             message: 'What is employee email?'
         }
     ]).then(function(addEmpRes){
-        // addEmpRes???
+        // what is addEmpRes???
         const sql = `INSERT INTO employees (id, last_name, first_name, email)
         VALUES (?,?,?,?)`;
         const params = [1, addEmpLNInput, addEmpFNInput, addEmpEmailInput];
@@ -392,6 +364,7 @@ function removeDept() {
                 'Legal'
             ]
             }.then(function(res){
+                // or is there a way to get the user input as (?,?,?) and have only one function using that value?
                 if(res.removeDeptChoose === 'Admin')
                 {
                     removeDeptAdmin();
