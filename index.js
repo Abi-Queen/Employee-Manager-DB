@@ -161,7 +161,7 @@ function viewAllEmpAdmin() {
         }
         console.log(row);
     });
-    //need to return to prompt for these?
+    //need to return to prompt for these? yes
 };
 function viewAllEmpSales() {
     db.query(`SELECT * FROM employees WHERE dept_id = 2`, (err, row) => {
@@ -215,6 +215,7 @@ function removeEmp() {
             message: 'Which employee would you like to remove? (use arrow keys)',
             choices: [
                 // how to get these choices from current table vs. hard coded? list by id? by (?,?,?) query function? write a function to generate list items from column?
+                // choices need to be from select*employees
                 'Puck Sprite',
                 'Buzz Lightyear',
                 'Lighthing McQueen',
@@ -294,7 +295,7 @@ function addEmp() {
         // what is addEmpRes???
         const sql = `INSERT INTO employees (id, last_name, first_name, email)
         VALUES (?,?,?,?)`;
-        const params = [1, addEmpLNInput, addEmpFNInput, addEmpEmailInput];
+        const params = [1, addEmpRes.addEmpLNInput, addEmpFNInput, addEmpEmailInput];
         db.query(sql, params, (err, result) => {
             if(err) {
                 console.log(err);
