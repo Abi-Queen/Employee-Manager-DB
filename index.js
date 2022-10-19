@@ -70,7 +70,7 @@ function viewAllDept() {
 
 function viewAllEmpDept() {
     //create a var: list of dept names
-    db.qyery('SELECT name FROM departments')
+    db.query('SELECT name FROM departments')
     .then(([rows]) => {
         let deptNames = rows;
         const departments = deptNames.map(({ id, name }) => ({
@@ -148,7 +148,7 @@ function addDept() {
         const sql = 'INSERT INTO departments (name, manager) VALUES ?,?'
         const params = [newDept, newDeptMgr]
 
-        //what are params now? console log?
+        //HELP what are params now? console log?
         db.query(sql, params (err, newDept, newDeptMgr) => {
             if (err) {
                 console.log(err);
@@ -160,6 +160,126 @@ function addDept() {
     .then(promptUser())
 };
 
+function addRole() {
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'newRoleTitle',
+            message: 'What is the name of the new role?',
+            validate: newRoleTitleInput => {
+                if (newRoleTitleInput) {
+                    return true;
+                } else {
+                    console.log('A name is needed.');
+                    return false;
+                }
+            }
+        }
+    ])
+    //HELP can db.query run here or does it need .then?
+    //create a var: list of dept names
+    //HELP but do I need .then? and do I need to create a new const departments, bc same as viewEmpDept above?
+    .then(db.query('SELECT name FROM departments'))
+    //HELP need .then or not?
+    .then(([rows]) => {
+        let deptNames = rows;
+        const departments = deptNames.map(({ id, name }) => ({
+            name: name,
+            value: id
+        }
+        //user selects dept from list, save choice as deptChoice or does it need a diff name?
+    .then(inquirer.prompt([
+        {
+            type: 'list',
+            name: 'deptChoice',
+            message: 'To which department does the new role belong? (use arrow keys)',
+            choices: departments
+        }
+    ])
+    )
+    .then(inquirer.prompt([
+            {
+                type: 'input',
+                name: 'newRoleSalary',
+                message: 'What is the salary for the new role?',
+                validate: newRoleSalaryInput => {
+                    if (newRoleSalaryInput) {
+                        return true;
+                    } else {
+                        console.log('Please enter a salary.');
+                        return false;
+                    }
+                }
+            }
+        ])
+    )
+    //update roles table with newRoleTitle, deptChoice, newRoleSalary
+    .then(() => {
+        const sql = 'INSERT INTO roles (title, department, salary) VALUES ?,?,?'
+        const params = [newRoleTitle, deptChoice, newRoleSalary]
 
+        //what are params now? console log?
+        db.query(sql, params (err, newRoleTitle, deptChoice, newRoleSalary)) => {
+            if (err) {
+                console.log(err);
+            }
+            console.log(newDept, newDeptMgr);
+        }
+    })
+    .then(console.log('Role added.'))
+    .then(promptUser())
+
+}
+}; 
+
+//first name, last name, email, job title, 
+function addEmp() {
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'newDept',
+            message: 'What is the name of the new department?',
+            validate: newDeptInput => {
+                if (newDeptInput) {
+                    return true;
+                } else {
+                    console.log('A name is needed.');
+                    return false;
+                }
+            }
+        }
+    ])
+    // can the next prompt run here or does it need .then?
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'newDeptMgr',
+            message: 'Enter first name and last name of the new department manager.',
+            validate: newDeptMgrInput => {
+                if (newDeptMgrInput) {
+                    return true;
+                } else {
+                    console.log('A name is needed.');
+                    return false;
+                }
+            }
+        }
+    ])
+    //save name of dept and deptmgr in db by updating table with newDept and newDeptMgr vars
+    .then(() => {
+        const sql = 'INSERT INTO departments (name, manager) VALUES ?,?'
+        const params = [newDept, newDeptMgr]
+
+        //HELP what are params now? console log?
+        db.query(sql, params (err, newDept, newDeptMgr) => {
+            if (err) {
+                console.log(err);
+            }
+            console.log(newDept, newDeptMgr);
+        })
+    })
+    .then(console.log('Department added.'))
+    .then(promptUser())
+};
 
 
