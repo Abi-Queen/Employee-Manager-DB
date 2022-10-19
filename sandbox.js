@@ -1,3 +1,27 @@
+// from Mansi, turn inquirer inputs into mysql input, line 374
+function removeDepartment() {
+    db.query("SELECT * FROM department")
+    .then(([rows]) => {
+    let departments = rows;
+    const departmentChoices = departments.map(({ id, name }) => ({
+    name: name,
+    value: id
+    }));
+    prompt({
+    type: "list",
+    name: "departmentId",
+    message:
+    "Which department would you like to remove? (Warning: This will also remove associated roles and employees)",
+    choices: departmentChoices
+    })
+    .then(res => db.removeDepartment(res.departmentId))
+    .then(() => console.log(`Removed department from the database`))
+    .then(() => loadMainPrompts())
+    })
+    }
+
+
+
 inquirer.prompt([
     {
         type: 'list',
