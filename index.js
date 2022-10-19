@@ -1,7 +1,7 @@
-const inquirer = require('inquirer');
-const mysql = require('mysql'); 
-const fs = require('fs'); 
-const db = require('./db/connection');
+const inquirer = require('inquirer')
+const mysql = require('mysql')
+const fs = require('fs')
+const db = require('./db/connection')
 
 // capture user input answering inquirer prompts
 const promptUser = () => {
@@ -11,127 +11,143 @@ const promptUser = () => {
             name: 'start',
             message: 'What would you like to do? (use arrow keys)',
             choices: [
-                'View all employees',
+                'View all departments',
                 'View all employees by department',
-                'View all employees by manager',
-                'Add employee',
-                'Remove employee',
-                'Update employee role',
-                'Update manager',
                 'View all roles',
-                'Add role',
-                'Remove role', 
-                'View all departments', 
-                'Add department',
-                'Remove department',
-                'View total payroll by department',
+                'View all employees',
+                'Add a department',
+                'Add a role',
+                'Add an employee',
+                'Update an employee role',
                 'Quit'
             ]
         }.then(function(res){
-            if(res.start === 'View all employees')
+            if(res.start === 'View all departments')
             {
-                viewAllEmp();
+                viewAllDept()
             }
             else if (res.start === 'View all employees by department')
             {
-                viewAllEmpDept();
-            }
-            else if (res.start === 'View all employees by manager')
-            {
-                viewAllEmpMgr();
-            }
-            else if (res.start === 'Add employee')
-            {
-                addEmp();
-            }
-            else if (res.start === 'Remove employee')
-            {
-                removeEmp();
-            }
-            else if (res.start === 'Update employee role')
-            {
-                updateRole();
-            }
-            else if (res.start === 'Update manager')
-            {
-                updateMgr();
+                viewAllEmpDept()
             }
             else if (res.start === 'View all roles')
             {
-                viewAllRoles();
+                viewAllRoles()
             }
-            else if (res.start === 'Add role')
+            else if (res.start === 'Add a department')
             {
-                addRole();
+                addDept()
             }
-            else if (res.start === 'Remove role')
+            else if (res.start === 'Add a role')
             {
-                removeRole();
+                addRole()
             }
-            else if (res.start === 'View all departments')
+            else if (res.start === 'Add an employee')
             {
-                viewAllDept();
+                addEmp()
             }
-            else if (res.start === 'Add department')
+            else if (res.start === 'Update an employee role')
             {
-                addDept();
-            }
-            else if (res.start === 'Remove department')
-            {
-                removeDept();
-            }
-            else if (res.start === 'View total payroll by department')
-            {
-                viewTotalPayrollByDept();
+                updateEmpRole()
             }
             else if (res.start === 'Quit')
             {
-                quit();
+                quit()
             }
         })
-    ]);
+    ])
 };
 
-function viewAllEmp() {
-    db.query(`SELECT * FROM employees`, (err, row) => {
+function viewAllDept() {
+    db.query('SELECT * FROM departments', (err, rows) => {
         if (err) {
-            console.log(err);
+            console.log(err)
         }
-        console.log(row);
-    }
-    );
-    promptUser();
+        console.log(rows)
+    })
+    promptUser()
 };
 
 function viewAllEmpDept() {
-    const sql = `SELECT * FROM employees WHERE department = ?`
-    const params = [res.params.id];
-    
-    db.query(sql, params, (err, rows) => {
+    //create a var: list of dept names
+    db.qyery('SELECT name FROM departments')
+    .then(([rows]) => {
+        let deptNames = rows;
+        const departments = deptNames.map(({ id, name }) => ({
+            name: name,
+            value: id
+        }));
+        //user selects dept from list, save choice as deptChoice
+        inquirer.prompt([
+        {
+            type: 'list',
+            name: 'deptChoice',
+            message: 'Which department? (use arrow keys)',
+            choices: departments
+        }])
+        //display employees where deptartment = deptChoice
+        .then(() => {
+            const sql = 'SELECT * FROM employees WHERE department = ?'
+            const params = [deptChoice]
+
+            db.query(sql, params, (err, employees) => {
+                if (err) {
+                    console.log(err);
+                }
+                console.log(employees);
+            })
+        })
+        .then(promptUser())
+    })
+}; 
+
+function viewAllRoles() {
+    db.query(`SELECT * FROM roles`, (err, rows) => {
         if (err) {
             console.log(err);
         }
         console.log(rows);
-        })
-        .then(([rows]) => {
-            let employees = rows;
-            const viewAllEmpDeptSelected = employees.map(({ id, name }) =>
-            ({
-                name: name,
-                value: id
-            }));
-            inquirer.prompt([
-            {
-                type: 'list',
-                name: 'allEmpDeptChoices',
-                message: 'Which department?',
-                choices: viewAllEmpDeptSelected
-            }])
-            .then(res => db.viewAllEmpDept(res.allEmpDeptChoices))
-            .then(() => console.log('Employees by department.'))
-            .then(() => promptUser())
-        })  
-    }
+    })
+    promptUser()
 };
+
+function addDept() {
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'newDept',
+            message: 'What is the name of the new department?',
+            validate: newDeptInput => {
+                if (newDeptInput) {
+                    return true;
+                } else {
+                    console.log('A name is needed.');
+                    return false;
+                }
+            }
+        }
+    ])
+    // can the next prompt run here or does it need .then?
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'newDeptMgr',
+            message: 'Enter first name and last name of the new department manager.',
+            validate: newDeptMgrInput => {
+                if (newDeptMgrInput) {
+                    return true;
+                } else {
+                    console.log('A name is needed.');
+                    return false;
+                }
+            }
+        }
+    ])
+    .then()
+    //ask user name of new dept, save as var newDept
+    //ask user manager of new dept, save as var newDeptMgr
+    //save name of dept in db by updating dept table with newDept and newDeptMgr
+    //console.log dept added
+}
 
 
