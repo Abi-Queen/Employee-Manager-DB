@@ -143,11 +143,23 @@ function addDept() {
             }
         }
     ])
-    .then()
-    //ask user name of new dept, save as var newDept
-    //ask user manager of new dept, save as var newDeptMgr
-    //save name of dept in db by updating dept table with newDept and newDeptMgr
-    //console.log dept added
-}
+    //save name of dept and deptmgr in db by updating table with newDept and newDeptMgr vars
+    .then(() => {
+        const sql = 'INSERT INTO departments (name, manager) VALUES ?,?'
+        const params = [newDept, newDeptMgr]
+
+        //what are params now? console log?
+        db.query(sql, params (err, newDept, newDeptMgr) => {
+            if (err) {
+                console.log(err);
+            }
+            console.log(newDept, newDeptMgr);
+        })
+    })
+    .then(console.log('Department added.'))
+    .then(promptUser())
+};
+
+
 
 
