@@ -141,7 +141,7 @@ function viewAllEmpDept() {
     );
 };
 
-//from mansi
+//from Mansi
 function removeDepartment() {
     db.query("SELECT * FROM department")
     .then(([rows]) => {
@@ -162,6 +162,60 @@ function removeDepartment() {
     .then(() => loadMainPrompts())
     })
     }
+
+    //ask user for new dept name, manager; save input as var object and add to dept table
+function addDept() {
+    //ask user to enter name for new dept, save as var newDept
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'newDept',
+            message: 'What is the name of the new department?',
+            validate: newDeptInput => {
+                if (newDeptInput) {
+                    return true;
+                } else {
+                    console.log('A name is needed.');
+                    return false;
+                }
+            }
+        }
+    ])
+    //ask user to enter manager for new dept, save as var newDeptMgr
+    //HELP can the next prompt run here or does it need .then?
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'newDeptMgr',
+            message: 'Enter first name and last name of the new department manager.',
+            validate: newDeptMgrInput => {
+                if (newDeptMgrInput) {
+                    return true;
+                } else {
+                    console.log('A name is needed.');
+                    return false;
+                }
+            }
+        }
+    ])
+    //save name of dept and deptmgr in db by inserting values into dept table
+    //HELP correct way to explain this: values or vars?
+    .then(() => {
+        const sql = 'INSERT INTO departments (name, manager) VALUES ?,?'
+        const params = [newDept, newDeptMgr]
+
+        //HELP what are params now? what to console log? Maybe don't need this part at all? just go straight to 167 console log?
+        db.query(sql, params, (err, newDept, newDeptMgr) => {
+            if (err) {
+                console.log(err);
+            }
+            console.log(newDept, newDeptMgr);
+        })
+    })
+    .then(console.log('Department added.'))
+    .then(promptUser())
+};
+
 
     // Create a candidate
 router.post('/candidate', ({ body }, res) => {
@@ -246,38 +300,38 @@ function removeEmp() {
     })
 };
 
-    // inquirer.prompt([
-    //     {
-    //         type: 'list',
-    //         name: 'removeEmpChoose',
-    //         message: 'Which employee would you like to remove? (use arrow keys)',
-    //         choices: [
-    //             // how to get these choices from current table vs. hard coded? list by id? by (?,?,?) query function? write a function to generate list items from column?
-    //             // choices need to be from select*employees
-    //             'Puck Sprite',
-    //             'Buzz Lightyear',
-    //             'Lighthing McQueen',
-    //             'Donald Duck',
-    //             'Bugs Bunny',
-    //             'Elmer Fudd',
-    //             'Mike Mulligan',
-    //             'Peter Rabbit',
-    //             'Octavian Caesar Augustus',
-    //             'Julius Caesar'
-    //         ]
-    //         }.then(function(res){
-    //             if(res.removeEmpChoose === 'Puck Sprite')
-    //             {
-    //                 removeEmpPuck();
-    //             }
-    //             else if (res.removeEmpChoose === 'Buzz Lightyear')
-    //             {
-    //                 removeEmpBuzz();
-    //             }
-    //         })
-    //     ].then(promptUser())
-    // );
-    // promptUser();
+    inquirer.prompt([
+        {
+            type: 'list',
+            name: 'removeEmpChoose',
+            message: 'Which employee would you like to remove? (use arrow keys)',
+            choices: [
+                // how to get these choices from current table vs. hard coded? list by id? by (?,?,?) query function? write a function to generate list items from column?
+                // choices need to be from select*employees
+                'Puck Sprite',
+                'Buzz Lightyear',
+                'Lighthing McQueen',
+                'Donald Duck',
+                'Bugs Bunny',
+                'Elmer Fudd',
+                'Mike Mulligan',
+                'Peter Rabbit',
+                'Octavian Caesar Augustus',
+                'Julius Caesar'
+            ]
+            }.then(function(res){
+                if(res.removeEmpChoose === 'Puck Sprite')
+                {
+                    removeEmpPuck();
+                }
+                else if (res.removeEmpChoose === 'Buzz Lightyear')
+                {
+                    removeEmpBuzz();
+                }
+            })
+        ].then(promptUser())
+    );
+    promptUser();
 
 function removeEmpPuck() {
     db.query(`DELETE FROM employees WHERE first_name = Puck`, (err, result) => {

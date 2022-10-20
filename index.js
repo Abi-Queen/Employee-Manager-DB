@@ -163,39 +163,42 @@ function addDept() {
             }
             console.log(newDept, newDeptMgr);
         })
-    }
+    })
     .then(console.log('Department added.'))
     .then(promptUser())
 };
 
+//ask user for new role job title, salary, dept; save input as var object and add to roles table
 function addRole() {
+        //ask user to enter name for new role, save as var newRoleTitle
     inquirer.prompt([
         {
             type: 'input',
             name: 'newRoleTitle',
-            message: 'What is the name of the new role?',
+            message: 'What is the job title?',
             validate: newRoleTitleInput => {
                 if (newRoleTitleInput) {
                     return true;
                 } else {
-                    console.log('A name is needed.');
+                    console.log('A job title is needed.');
                     return false;
                 }
             }
         }
     ])
-    //HELP can db.query run here or does it need .then?
-    //create a var: list of dept names
-    //HELP but do I need .then? and do I need to create a new const departments, bc same as viewEmpDept above?
+    //create var departments to list department names in inquirer list so user can choose one 
+    //HELP do I need .then here? should this part be a nested function? and do I need to create a new const departments, bc same as viewEmpDept above? or do I need a new one here bc resulting var (deptChoice) will be diff? const or var or let for function scoped?
     .then(db.query('SELECT name FROM departments'))
-    //HELP need .then or not?
+    //HELP need .then here or not?
     .then(([rows]) => {
         let deptNames = rows;
         const departments = deptNames.map(({ id, name }) => ({
             name: name,
             value: id
-        }
-        //user selects dept from list, save choice as deptChoice or does it need a diff name?
+        }))
+    })
+    //user selects dept from list, save choice as deptChoice or does it need a diff name bc did this above for adding a dept?
+    //HELP need .then here or not?
     .then(inquirer.prompt([
         {
             type: 'list',
@@ -205,50 +208,51 @@ function addRole() {
         }
     ])
     )
+    //ask user for new role salary, save car newRoleSalary
     .then(inquirer.prompt([
-            {
-                type: 'input',
-                name: 'newRoleSalary',
-                message: 'What is the salary for the new role?',
-                validate: newRoleSalaryInput => {
-                    if (newRoleSalaryInput) {
-                        return true;
-                    } else {
-                        console.log('Please enter a salary.');
-                        return false;
-                    }
+        {
+            type: 'input',
+            name: 'newRoleSalary',
+            message: 'What is the salary for the new role?',
+            validate: newRoleSalaryInput => {
+                if (newRoleSalaryInput) {
+                    return true;
+                } else {
+                    console.log('Please enter a salary.');
+                    return false;
                 }
             }
-        ])
+        }
+    ])
     )
-    //update roles table with newRoleTitle, deptChoice, newRoleSalary
-    .then(() => {
+    //update roles table with newRoleTitle, deptChoice, newRoleSalary values
+    //HELP need params/argument for this .then?
+    .then((newRoleTitle, deptChoice, newRoleSalary) => {
         const sql = 'INSERT INTO roles (title, department, salary) VALUES ?,?,?'
         const params = [newRoleTitle, deptChoice, newRoleSalary]
 
-        //what are params now? console log?
-        db.query(sql, params (err, newRoleTitle, deptChoice, newRoleSalary)) => {
+        //HELP what are params now? console log? mabye don't need this part at all, go straight to console log 'role added'?
+        db.query(sql, params, (err, newRoleTitle, deptChoice, newRoleSalary) => {
             if (err) {
                 console.log(err);
             }
-            console.log(newDept, newDeptMgr);
-        }
+            console.log(newRoleTitle, deptChoice, newRoleSalary);
+        })
     })
     .then(console.log('Role added.'))
     .then(promptUser())
-
-}
 }; 
 
-//first name, last name, email, job title, 
+//add new employee to employee table with first name, last name, email, role, manager 
 function addEmp() {
+    //ask user for new employee first name, save as var newEmpFN
     inquirer.prompt([
         {
             type: 'input',
-            name: 'newDept',
-            message: 'What is the name of the new department?',
-            validate: newDeptInput => {
-                if (newDeptInput) {
+            name: 'newEmpFN',
+            message: 'What is the first name of the new employee?',
+            validate: newEmpFNInput => {
+                if (newEmpFNInput) {
                     return true;
                 } else {
                     console.log('A name is needed.');
@@ -257,20 +261,29 @@ function addEmp() {
             }
         }
     ])
-    // can the next prompt run here or does it need .then?
+    //HELP can the next prompt run here or does it need .then?
+    //ask user for new employee last name, save as var 
     inquirer.prompt([
         {
             type: 'input',
-            name: 'newDeptMgr',
-            message: 'Enter first name and last name of the new department manager.',
-            validate: newDeptMgrInput => {
-                if (newDeptMgrInput) {
+            name: 'newEmpLN',
+            message: 'What is the last name of the new employee?',
+            validate: newEmpLNInput => {
+                if (newEmpLNInput) {
                     return true;
                 } else {
                     console.log('A name is needed.');
                     return false;
                 }
             }
+        }
+    ])
+    //ask user for new employee email, save as var 
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'newEmpEmail',
+            message: 'What is the email address of the new employee?'
         }
     ])
     //save name of dept and deptmgr in db by updating table with newDept and newDeptMgr vars
