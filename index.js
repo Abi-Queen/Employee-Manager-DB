@@ -3,7 +3,7 @@ const mysql = require('mysql')
 const fs = require('fs')
 const db = require('./db/connection')
 
-// capture user input answering inquirer prompts
+// main menu, ask user what they want to do in the app; if statements trigger individual functions
 const promptUser = () => {
     return inquirer.prompt([
         {
@@ -58,6 +58,7 @@ const promptUser = () => {
     ])
 };
 
+//display full employees table: ids, first name, last name, job title, department, salary, manager
 function viewAllDept() {
     db.query('SELECT * FROM departments', (err, rows) => {
         if (err) {
@@ -68,8 +69,9 @@ function viewAllDept() {
     promptUser()
 };
 
+//display employees in a selected department
 function viewAllEmpDept() {
-    //create a var: list of dept names
+    //create a var object to list dept names in inquirer prompt
     db.query('SELECT name FROM departments')
     .then(([rows]) => {
         let deptNames = rows;
@@ -77,7 +79,7 @@ function viewAllEmpDept() {
             name: name,
             value: id
         }));
-        //user selects dept from list, save choice as deptChoice
+        //user selects dept from list of depts, save selection as deptChoice
         inquirer.prompt([
         {
             type: 'list',
@@ -85,22 +87,24 @@ function viewAllEmpDept() {
             message: 'Which department? (use arrow keys)',
             choices: departments
         }])
-        //display employees where deptartment = deptChoice
-        .then(() => {
-            const sql = 'SELECT * FROM employees WHERE department = ?'
-            const params = [deptChoice]
-
-            db.query(sql, params, (err, employees) => {
-                if (err) {
-                    console.log(err);
-                }
-                console.log(employees);
-            })
-        })
-        .then(promptUser())
     })
+    //display employees where deptartment = deptChoice
+    //HELP is deptChoice the right parameter for this .then? or no param? is it a param or argument?
+    .then((deptChoice) => {
+        const sql = 'SELECT * FROM employees WHERE department = ?'
+        const params = [deptChoice]
+
+        db.query(sql, params, (err, employees) => {
+            if (err) {
+                console.log(err);
+            }
+            console.log(employees);
+        })
+    })
+        .then(promptUser())
 }; 
 
+//display full roles table: id, job title, dept, salary
 function viewAllRoles() {
     db.query(`SELECT * FROM roles`, (err, rows) => {
         if (err) {
@@ -111,7 +115,9 @@ function viewAllRoles() {
     promptUser()
 };
 
+//ask user for new dept name, manager; save input as var object and add to dept table
 function addDept() {
+    //ask user to enter name for new dept, save as var newDept
     inquirer.prompt([
         {
             type: 'input',
@@ -127,7 +133,8 @@ function addDept() {
             }
         }
     ])
-    // can the next prompt run here or does it need .then?
+    //ask user to enter manager for new dept, save as var newDeptMgr
+    //HELP can the next prompt run here or does it need .then?
     inquirer.prompt([
         {
             type: 'input',
@@ -143,19 +150,20 @@ function addDept() {
             }
         }
     ])
-    //save name of dept and deptmgr in db by updating table with newDept and newDeptMgr vars
+    //save name of dept and deptmgr in db by inserting values into dept table
+    //HELP correct way to explain this: values or vars?
     .then(() => {
         const sql = 'INSERT INTO departments (name, manager) VALUES ?,?'
         const params = [newDept, newDeptMgr]
 
-        //HELP what are params now? console log?
-        db.query(sql, params (err, newDept, newDeptMgr) => {
+        //HELP what are params now? what to console log? Maybe don't need this part at all? just go straight to 167 console log?
+        db.query(sql, params, (err, newDept, newDeptMgr) => {
             if (err) {
                 console.log(err);
             }
             console.log(newDept, newDeptMgr);
         })
-    })
+    }
     .then(console.log('Department added.'))
     .then(promptUser())
 };

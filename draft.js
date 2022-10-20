@@ -1,6 +1,6 @@
 const db = require("./db/connection");
 
-// capture user input answering inquirer prompts
+// main menu, ask user what they want to do in the app; if statements trigger individual functions
 const promptUser = () => {
     return inquirer.prompt([
         {
@@ -89,6 +89,7 @@ const promptUser = () => {
     ]);
 };
 
+//display full employees table
 function viewAllEmp() {
     db.query(`SELECT * FROM employees`, (err, row) => {
         if (err) {
@@ -160,35 +161,6 @@ function removeDepartment() {
     .then(() => console.log(`Removed department from the database`))
     .then(() => loadMainPrompts())
     })
-    }
-
-    
-    db.query(sql, params, (err, employees) => {
-        if (err) {
-            console.log(err);
-        }
-        console.log(employees);
-        })
-        .then(([employees]) => {
-            let employees = rows;
-            console.log(employees)
-
-            const viewAllEmpDeptSelected = employees.map(({ id, name }) =>
-            ({
-                name: name,
-                value: id
-            }));
-            inquirer.prompt([
-            {
-                type: 'list',
-                name: 'allEmpDeptChoices',
-                message: 'Which department?',
-                choices: viewAllEmpDeptSelected
-            }])
-            .then(res => db.viewAllEmpDept(res.allEmpDeptChoices))
-            .then(() => console.log('Employees by department.'))
-            .then(() => promptUser())
-        })  
     }
 
     // Create a candidate
