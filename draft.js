@@ -250,7 +250,28 @@ router.post('/candidate', ({ body }, res) => {
     });
   });
 
-  
+//MODEL UPDATE QUERY
+  const sql = `UPDATE candidates SET party_id = ?
+  WHERE id = ?`;
+const params = [req.body.party_id, req.params.id];
+db.query(sql, params, (err, result) => {
+  if(err) {
+      res.status(400).json({ error: err.message });
+      //check if a record was found
+  } else if (!result.affectedRows) {
+      res.json({
+          message: 'candidate was not found'
+      });
+  } else {
+      res.json({
+          message: 'success',
+          data: req.body,
+          changes: result.affectedRows
+      });
+  }
+});
+
+
 function viewAllEmpDept() {
     const sql = `SELECT * FROM employees WHERE department = ?`;
     const params = [req.params.id];

@@ -1,7 +1,8 @@
 const inquirer = require('inquirer')
 const mysql = require('mysql')
 const fs = require('fs')
-const db = require('./db/connection')
+const db = require('./db/connection');
+const { title } = require('process');
 
 // main menu, ask user what they want to do in the app; if statements trigger individual functions
 const promptUser = () => {
@@ -356,14 +357,61 @@ function addEmp() {
 
 };
 
-//HELP will this work so we don't have to do this function over and over? but says called but never read? why?
-function listDepts() {
-    ([rows]) => {
-        let deptNames = rows;
-        const departments = deptNames.map(({ id, name }) => ({
-            name: name,
-            value: id
-        }))
-    }
+function updateEmpRole() {
+    //ask user to select an employee
+    //generate list of employees for inquirer prompt from employee table, save as employees
+    //HELP is this SELECT query correct?
+    (db.query('SELECT first_name, last_name FROM employees'))
+    //HELP need .then here before (([rows]))?
+    //HELP how to write this: name, id?
+        (([rows]) => {
+            let empNames = rows;
+            const employees = empNames.map(({ id, first_name, last_name }) => ({
+                name: ?
+                value: id
+            }))
+            //user selects role from list, save selection as updateEmpChoice
+            .then(inquirer.prompt([
+                {
+                    type: 'list',
+                    name: 'updateEmpChoice',
+                    message: 'Which employee do you wish to update? (use arrow keys)',
+                    choices: employees
+                }
+            ])
+        )})
+    //ask user to select a new role
+    //generate list of roles for inquirer prompt from roles table, save as updateRole
+    //HELP is this SELECT query correct?
+    (db.query('SELECT title FROM roles'))
+    //HELP need .then here before (([rows]))?
+        (([rows]) => {
+            let jobTitles = rows;
+            const roles = jobTitles.map(({ id, name }) => ({
+                name: title,
+                value: id
+            }))
+            //user selects role from list, save selection as updateEmpChoice
+            .then(inquirer.prompt([
+                {
+                    type: 'list',
+                    name: 'updateRoleChoice',
+                    message: 'What is the new role of the employee? (use arrow keys)',
+                    choices: roles
+                }
+            ]))
+        })
+    .then(() => {
+        const sql = 'UPDATE employees SET role_title = ? WHERE id = ?';
+        const params = [res.updateEmpRole, res.updateEmpChoice];
+    })
+    .then(console.log('Employee role updated.'))
+    .then(db.query('SELECT * FROM employees', (err, rows) => {
+        if (err) {
+            console.log(err)
+        }
+        console.log(rows)
+    }))
+    .then(promptUser());
 };
 
