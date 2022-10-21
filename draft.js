@@ -202,14 +202,14 @@ function addDept() {
     //HELP correct way to explain this: values or vars?
     .then(() => {
         const sql = 'INSERT INTO departments (name, manager) VALUES ?,?'
-        const params = [newDept, newDeptMgr]
+        const params = [res.newDept.id, res.newDeptMgr.id]
 
         //HELP what are params now? what to console log? Maybe don't need this part at all? just go straight to 167 console log?
-        db.query(sql, params, (err, newDept, newDeptMgr) => {
+        db.query(sql, params, (err, rows) => {
             if (err) {
                 console.log(err);
             }
-            console.log(newDept, newDeptMgr);
+            console.table(rows);
         })
     })
     .then(console.log('Department added.'))

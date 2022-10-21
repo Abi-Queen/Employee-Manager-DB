@@ -93,16 +93,16 @@ function viewAllEmpDept() {
         }])
     })
     //display employees where deptartment = deptChoice
-    //HELP is deptChoice the right parameter for this .then? or no param? is it a param or argument?
+    //HELP is deptChoice the right parameter for this .then? 
     .then((deptChoice) => {
         const sql = 'SELECT * FROM employees WHERE department = ?'
-        const params = [deptChoice]
+        const params = [res.deptChoice.id]
 
-        db.query(sql, params, (err, employees) => {
+        db.query(sql, params, (rows) => {
             if (err) {
                 console.log(err);
             }
-            console.log(employees);
+            console.table(rows);
         })
     })
         .then(promptUser())
@@ -114,12 +114,12 @@ function viewAllRoles() {
         if (err) {
             console.log(err);
         }
-        console.log(rows);
+        console.table(rows);
     })
     promptUser()
 };
 
-//ask user for new dept name, manager; save input as var object and add to dept table
+//ask user for new dept name, manager; add res to dept table
 function addDept() {
     //ask user to enter name for new dept, save as var newDept
     inquirer.prompt([
@@ -137,7 +137,7 @@ function addDept() {
             }
         }
     ])
-    //ask user to enter manager for new dept, save as var newDeptMgr
+    //ask user to enter manager for new dept
     //HELP can the next prompt run here or does it need .then?
     inquirer.prompt([
         {
@@ -154,27 +154,27 @@ function addDept() {
             }
         }
     ])
-    //save name of dept and deptmgr in db by inserting values into dept table
+    //insert res for newDept and newDeptMgr into dept table
     //HELP correct way to explain this: values or vars?
     .then(() => {
         const sql = 'INSERT INTO departments (name, manager) VALUES ?,?'
-        const params = [newDept, newDeptMgr]
+        const params = [res.newDept.id, res.newDeptMgr.id]
 
         //HELP what are params now? what to console log? Maybe don't need this part at all? just go straight to 167 console log?
-        db.query(sql, params, (err, newDept, newDeptMgr) => {
+        db.query(sql, params, (err, rows) => {
             if (err) {
                 console.log(err);
             }
-            console.log(newDept, newDeptMgr);
+            console.table(rows);
         })
     })
     .then(console.log('Department added.'))
     .then(promptUser())
 };
 
-//ask user for new role job title, salary, dept; save input as var object and add to roles table
+//ask user for new role job title, salary, dept; add res to roles table
 function addRole() {
-        //ask user to enter name for new role, save as var newRoleTitle
+    //ask user to enter name for new role
     inquirer.prompt([
         {
             type: 'input',
@@ -233,14 +233,14 @@ function addRole() {
     //HELP need params/argument for this .then?
     .then((newRoleTitle, newRoleDeptChoice, newRoleSalary) => {
         const sql = 'INSERT INTO roles (title, department, salary) VALUES ?,?,?'
-        const params = [newRoleTitle, newRoleDeptChoice, parseInt(newRoleSalary)]
+        const params = [res.newRoleTitle.id, res.newRoleDeptChoice.id, parseInt(res.newRoleSalary.id)]
 
         //HELP what are params now? console log? mabye don't need this part at all, go straight to console log 'role added'?
-        db.query(sql, params, (err, newRoleTitle, newRoleDeptChoice, newRoleSalary) => {
+        db.query(sql, params, (err, rows) => {
             if (err) {
                 console.log(err);
             }
-            console.log(newRoleTitle, newRoleDeptChoice, newRoleSalary);
+            console.table(rows);
         })
     })
     .then(console.log('Role added.'))
