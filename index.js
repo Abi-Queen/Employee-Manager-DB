@@ -20,7 +20,8 @@ const promptUser = () => {
                 'Update an employee role',
                 'Quit'
             ]
-        }.then((res) => {
+        }
+    ]).then((res) => {
             if(res.start === 'View all departments')
             {
                 viewAllDept()
@@ -32,6 +33,10 @@ const promptUser = () => {
             else if (res.start === 'View all roles')
             {
                 viewAllRoles()
+            }
+            else if (res.start === 'View all employees')
+            {
+                viewAllEmp()
             }
             else if (res.start === 'Add a department')
             {
@@ -54,18 +59,69 @@ const promptUser = () => {
                 quit()
             }
         })
-    ])
 }
 
-//display full employees table: ids, first name, last name, email, job title, department, salary, manager
+//display full departments table: ids, names
 function viewAllDept() {
     db.query('SELECT * FROM departments', (err, rows) => {
         if (err) {
             console.log(err)
         }
-        console.table([rows]);
+        //HELP cTable or console.table synatx
+        console.table([rows])
     })
     promptUser()
 }
 
+//display full employees table: ids, first_name, last_name, email, role_id, manager_id
+function viewAllEmp() {
+
+}
+
+//display employees in a selected department; do this one later
+promptUser()
+
+//display full roles table: ids, title, salary, department_id
+function viewAllRoles() {
+    db.query(`SELECT * FROM roles`, (err, rows) => {
+        if (err) {
+            console.log(err)
+        }
+        cTable([rows])
+    })
+    promptUser()
+}
+
+//ask user for new dept name; add to db
+function addDept() {
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'newDept',
+            message: 'What is the name of the new department?',
+            validate: newDeptInput => {
+                if (newDeptInput) {
+                    return true;
+                } else {
+                    console.log('A name is needed.');
+                    return false;
+                }
+            } 
+        }
+    //insert newDept into departments table
+    //HELP: how to input into console.table
+    ]).then((res) => {
+        console.log(res)
+        const sql = 'INSERT INTO departments (name) VALUES (?)'
+        const params = [res.newDept.id]
+        db.query(sql, params, (err, rows) => {
+            if(err) {
+                console.log(err)
+            }
+            cTable([res])
+        })
+    })
+}
+
+//call main menu function
 promptUser()
