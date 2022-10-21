@@ -1,8 +1,11 @@
 const inquirer = require('inquirer')
-const mysql = require('mysql')
-const fs = require('fs')
+require("console.table");
+// const mysql = require('mysql')
+// const fs = require('fs')
 const db = require('./db/connection');
 const { title } = require('process');
+
+// when input salary, do parseInt to convert before adding to db; do for all inquirer if they need int, bc they're strings
 
 // main menu, ask user what they want to do in the app; if statements trigger individual functions
 const promptUser = () => {
@@ -65,7 +68,7 @@ function viewAllDept() {
         if (err) {
             console.log(err)
         }
-        console.log(rows)
+        console.table(rows);
     })
     promptUser()
 };
@@ -226,11 +229,11 @@ function addRole() {
         }
     ])
     )
-    //update roles table with newRoleTitle, deptChoice, newRoleSalary values
+    //update roles table with newRoleTitle, deptChoice, newRoleSalary (parseInt to convert from string) values
     //HELP need params/argument for this .then?
     .then((newRoleTitle, newRoleDeptChoice, newRoleSalary) => {
         const sql = 'INSERT INTO roles (title, department, salary) VALUES ?,?,?'
-        const params = [newRoleTitle, newRoleDeptChoice, newRoleSalary]
+        const params = [newRoleTitle, newRoleDeptChoice, parseInt(newRoleSalary)]
 
         //HELP what are params now? console log? mabye don't need this part at all, go straight to console log 'role added'?
         db.query(sql, params, (err, newRoleTitle, newRoleDeptChoice, newRoleSalary) => {
@@ -402,8 +405,14 @@ function updateEmpRole() {
             ]))
         })
     .then(() => {
-        const sql = 'UPDATE employees SET role_title = ? WHERE id = ?';
-        const params = [res.updateEmpRole, res.updateEmpChoice];
+        const sql = 'UPDATE employees SET role_title = ? WHERE id = ?'
+        const params = [res.updateEmpRole, res.updateEmpChoice]
+        db.query(sql, params, (err, updateEmpRole, updateEmpChoice) => {
+            if (err) {
+                console.log(err)
+            }
+            console.log(updateEmpChoice, updateEmpRole)
+        })
     })
     .then(console.log('Employee role updated.'))
     .then(db.query('SELECT * FROM employees', (err, rows) => {
