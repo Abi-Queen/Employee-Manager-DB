@@ -1,35 +1,30 @@
 INSERT INTO departments (name)
 VALUES
   ('Admin'),
-  ('Sales');
-  -- ('Engineering', 'Harriet Tubman'),
-  -- ('Finance', 'Eleanor Roosevelt'),
-  -- ('Legal', 'Abigail Adams');
+  ('Sales'),
+  ('Engineering'),
+  ('Finance'),
+  ('Legal');
   
 INSERT INTO roles (title, salary, department_id)
 VALUES
   ('Service', 80000, 1),
-  ('Salesperson', 100000, 3);
---   sinthesenate@rome.com', 'CEO');('Software Engineer', '130000', 2);
---   ('Public Relations', '100000', 1),
---   ('CEO', '300000', 1),
---   ('Quality Control', '200000', 3),
---   ('Product Developer', '200000', 3),
---   ('Marketing', '100000', 2),
---   ('CFO', '300000', 4),
---   ('Accountant', '150000', 4),
---   ('Lawyer', '80000', 5),
---   ('Analyst', '80000', 5);
+  ('Salesperson', 100000, 3),
+  ('Software Engineer', 130000, 2),
+  ('Public Relations', 100000, 1),
+  ('CEO', 300000, 1),
+  ('Marketing', 100000, 2),
+  ('CFO', 300000, 4),
+  ('Accountant', 150000, 4),
+  ('Lawyer', 80000, 5);
 
--- -- INSERT INTO employees (first_name, last_name, email, job_title)
--- -- VALUES
--- --   ('Puck', 'Sprite', 'upanddown@midsummer.net', 'Software Engineer'),
--- --   ('Buzz', 'Lightyear', 'beyond@andysroom.com', 'Salesperson'),
--- --   ('Lightning', 'McQueen', 'thunderhollow@cars.net', 'Marketing'),
--- --   ('Donald', 'Duck', 'duckseason@disney.com', 'Accountant'),
--- --   ('Bugs', 'Bunny', 'whatsupdoc@looney.net', 'Lawyer'),
--- --   ('Elmer', 'Fud', 'wascallywabbit@looney.net', 'Service'),
--- --   ('Mike', 'Mulligan', 'maryannesbuddy@popperville.gov', 'Public Relations'),
--- --   ('Peter', 'Rabbit', 'inthegardenagain@potterworld.uk', 'Lawyer'),
--- --   ('Octavian Caesar', 'Augustus', 'totallynotemperor@rome.com', 'CFO'),
--- --   ('Julius', 'Caesar', 'gotfriend
+INSERT INTO employees (first_name, last_name, email, role_id, manager_id)
+VALUES
+('Luke', 'Skywalker', 'aldoran4ever@falcon.org', 1, 2),
+('Lightning', 'McQueen', 'thunderhollow@cars.net', 2, 4),
+('Donald', 'Duck', 'duckseason@disney.com', 8, 7),
+('Bugs', 'Bunny', 'whatsupdoc@looney.net', 4, 6),
+('Mike', 'Mulligan', 'maryannesbuddy@popperville.gov', 5, 4),
+('Peter', 'Rabbit', 'inthegardenagain@potterworld.uk', 6, 3),
+('Octavian Caesar', 'Augustus', 'justfirstcitizen@rome.com', 7, 3),
+('Julius', 'Caesar', 'gotfriendsinthesenate@rome.com', 8, 5);

@@ -54,6 +54,7 @@
     "color-convert": "^2.0.1",
     "color-name": "^1.1.4",
     "concat-map": "^0.0.1",
+    "console.table": "^0.10.0",
     "convert-source-map": "^1.8.0",
     "cross-spawn": "^7.0.3",
     "debug": "^4.3.4",
