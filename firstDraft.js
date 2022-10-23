@@ -252,6 +252,20 @@ function addRole() {
     .then(promptUser())
 }; 
 
+
+//display full employees table: ids, first_name, last_name, email, role_id, manager_id
+const viewAllEmp = () => {
+    db.query('SELECT * FROM employees', (err, res) => {
+        if (err) {
+            console.log(err)
+        }
+        console.log(' \n\ ')
+        console.table(res)
+    })
+    console.log('Use arrow keys to select a new prompt')
+    promptUser()
+}
+
 //add new employee to employee table with first name, last name, email, role, manager 
 function addEmp() {
     //ask user for new employee first name, save as var newEmpFN

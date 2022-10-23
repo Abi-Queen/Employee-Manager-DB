@@ -1,6 +1,18 @@
 const inquirer = require('inquirer')
 const cTable = require('console.table')
 const db = require('./db/connection')
+ 
+//HELP
+// var deptChoices = {
+//     db.query('SELECT * FROM departments')
+//     (([rows]) => {
+//         let departments = rows;
+//         const departmentChoices = departments.map(({ id, name }) => ({
+//             name: name,
+//             value: id
+//         }))
+//     })
+// }
 
 // main menu, ask user what they want to do in the app; if statements trigger individual functions
 const promptUser = () => {
@@ -28,7 +40,7 @@ const promptUser = () => {
             }
             else if (res.start === 'View all employees by department')
             {
-                viewAllEmpDept()
+                viewAllEmpDept2()
             }
             else if (res.start === 'View all roles')
             {
@@ -70,6 +82,7 @@ const viewAllDept = () => {
         console.log(' \n\ ')
         console.table(res)
     })
+    console.log('Use arrow keys to select a new prompt')
     promptUser()
 }
 
@@ -82,13 +95,15 @@ const viewAllEmp = () => {
         console.log(' \n\ ')
         console.table(res)
     })
+    console.log('Use arrow keys to select a new prompt')
     promptUser()
 }
 
 //display employees in a selected department
-const viewAllEmpDept = () => {
+//HELP how to generate inquirer prompt choices from dept name table
+const viewAllEmpDept1 = () => {
     db.query('SELECT * FROM departments')
-    .then(([rows]) => {
+    (([rows]) => {
         let departments = rows;
         const departmentChoices = departments.map(({ id, name }) => ({
             name: name,
@@ -115,17 +130,24 @@ const viewAllEmpDept = () => {
             })
         })
     })
-    promptUser()
-}
+        promptUser()
+    }
+
+const viewAllEmpDept2 = () => {
+
+
+    }
 
 //display full roles table: ids, title, salary, department_id
 const viewAllRoles = () => {
-    db.query(`SELECT * FROM roles`, (err, rows) => {
+    db.query('SELECT * FROM roles', (err, res) => {
         if (err) {
             console.log(err)
         }
-        console.table([rows])
+        console.log(' \n\ ')
+        console.table(res)
     })
+    console.log('Use arrow keys to select a new prompt')
     promptUser()
 }
 
