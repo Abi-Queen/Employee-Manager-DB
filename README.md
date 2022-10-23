@@ -11,12 +11,12 @@ The app is demonstrated in this [video walkthrough](https://drive.google.com/fil
 Here is the [GitHub repo](https://github.com/Abi-Queen/Employee-Manager-DB). 
 
 ## Contributors
-This project was created by [Abigail Queen](https://github.com/Abi-Queen) using [starter code](https://github.com/coding-boot-camp/potential-enigma.git) from [UC Davis Coding Bootcamp 2022](https://bootcamp.ucdavis.edu/) and help from bootcamp tutor [Mansi Patel](https://github.com/mansijp) and bootcamp TA Chris Song.
+This project was created by [Abigail Queen](https://github.com/Abi-Queen.git) with help from bootcamp tutor [Mansi Patel](https://github.com/mansijp) and bootcamp TAs.
 
-Other resources utilized:
-- [UC Davis Coding Bootcamp 2022](https://bootcamp.ucdavis.edu/): Module 9
-- [GitHub Gist: Markdown License Badges](https://gist.github.com/lukas-h/2a5d00690736b4c3a7ba)
-- [GitHub Docs: Basic writing and formatting syntax](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax)
+## Other resources utilized:
+- [UC Davis Coding Bootcamp 2022](https://bootcamp.ucdavis.edu/)
+- Adarsh Kumar, ['Self Referencing Foreign Key in MySQL'](https://pencilprogrammer.com/self-referencing-foreign-key-in-mysql/) 
+- W3Schools, ['Node.js MySQL'](https://www.w3schools.com/nodejs/nodejs_mysql.asp)
 
 ## Date
-Created in August 2022.
+Created in October 2022.
