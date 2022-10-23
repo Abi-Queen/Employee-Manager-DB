@@ -1,18 +1,6 @@
 const inquirer = require('inquirer')
 const cTable = require('console.table')
 const db = require('./db/connection')
- 
-//HELP
-// var deptChoices = {
-//     db.query('SELECT * FROM departments')
-//     (([rows]) => {
-//         let departments = rows;
-//         const departmentChoices = departments.map(({ id, name }) => ({
-//             name: name,
-//             value: id
-//         }))
-//     })
-// }
 
 // main menu, ask user what they want to do in the app; if statements trigger individual functions
 const promptUser = () => {
@@ -23,7 +11,6 @@ const promptUser = () => {
             message: 'What would you like to do? (use arrow keys)',
             choices: [
                 'View all departments',
-                'View all employees by department',
                 'View all roles',
                 'View all employees',
                 'Add a department',
@@ -40,7 +27,7 @@ const promptUser = () => {
             }
             else if (res.start === 'View all employees by department')
             {
-                viewAllEmpDept2()
+                viewAllEmpDept()
             }
             else if (res.start === 'View all roles')
             {
@@ -99,45 +86,6 @@ const viewAllEmp = () => {
     promptUser()
 }
 
-//display employees in a selected department
-//HELP how to generate inquirer prompt choices from dept name table
-const viewAllEmpDept1 = () => {
-    db.query('SELECT * FROM departments')
-    (([rows]) => {
-        let departments = rows;
-        const departmentChoices = departments.map(({ id, name }) => ({
-            name: name,
-            value: id
-        }))
-    inquirer.prompt([
-            {
-                type: 'list',
-                name: 'deptChoice',
-                message: 'Which department? (use arrow keys)',
-                choices: departmentChoices
-            }
-        ])
-        .then((res) => {
-            const sql = 'SELECT first_name, last_name FROM employees WHERE department = (?)'
-            const params = [res.deptChoice.id]
-
-            db.query(sql, params, (res) => {
-                if(err) {
-                    console.log(err);
-                }
-                console.log(' \n\ ')
-                console.table(res);
-            })
-        })
-    })
-        promptUser()
-    }
-
-const viewAllEmpDept2 = () => {
-
-
-    }
-
 //display full roles table: ids, title, salary, department_id
 const viewAllRoles = () => {
     db.query('SELECT * FROM roles', (err, res) => {
@@ -168,19 +116,18 @@ const addDept = () => {
             } 
         }
     //insert newDept into departments table
-    //HELP: how to input into console.table
     ]).then((res) => {
-        console.log(res)
         const sql = 'INSERT INTO departments (name) VALUES (?)'
         const params = [res.newDept.id]
-        db.query(sql, params, (err, rows) => {
+        db.query(sql, params, (err, res) => {
             if(err) {
                 console.log(err)
             }
-            cTable([res])
+            console.table(res)
         })
+        console.log('New department added.')
     })
+    promptUser()
 }
 
-//call main menu function
 promptUser()

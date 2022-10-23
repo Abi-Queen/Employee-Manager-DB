@@ -444,3 +444,36 @@ function updateEmpRole() {
     .then(promptUser());
 };
 
+//display employees in a selected department
+const viewAllEmpDept = () => {
+    //HELP need to create list of departments for departmentChoices in inquirer prompt, where to do this?
+    // db.query('SELECT * FROM departments')
+    // (([rows]) => {
+    //     let departments = rows;
+    //     const departmentChoices = departments.map(({ id, name }) => ({
+    //         name: name,
+    //         value: id
+    //     }))
+    inquirer.prompt([
+            {
+                type: 'list',
+                name: 'deptChoice',
+                message: 'Which department? (use arrow keys)',
+                choices: departmentChoices
+            }
+        ])
+        .then((res) => {
+            //HELP so stuck, how to refer to department name when the only fk in employees is to role_id? can run mysql query in shell listing employee names where role_id is a number, but how to get employee names where dept name is the one chosen in prompt??? create global var to save departmentChoices as corresponding role_id numbers instead of dept-names?
+            const sql = 'SELECT first_name, last_name FROM employees WHERE department_id = (?)'
+            const params = [res.deptChoice.id]
+
+            db.query(sql, params, (res) => {
+                if(err) {
+                    console.log(err);
+                }
+                console.log(' \n\ ')
+                console.table(res);
+            })
+        })
+    promptUser()
+}
