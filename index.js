@@ -62,38 +62,75 @@ const promptUser = () => {
 }
 
 //display full departments table: ids, names
-function viewAllDept() {
-    db.query('SELECT * FROM departments', (err, rows) => {
+const viewAllDept = () => {
+    db.query('SELECT * FROM departments', (err, res) => {
         if (err) {
             console.log(err)
         }
-        //HELP cTable or console.table synatx
-        console.table([rows])
+        console.log(' \n\ ')
+        console.table(res)
     })
     promptUser()
 }
 
 //display full employees table: ids, first_name, last_name, email, role_id, manager_id
-function viewAllEmp() {
-
+const viewAllEmp = () => {
+    db.query('SELECT * FROM employees', (err, res) => {
+        if (err) {
+            console.log(err)
+        }
+        console.log(' \n\ ')
+        console.table(res)
+    })
+    promptUser()
 }
 
-//display employees in a selected department; do this one later
-promptUser()
+//display employees in a selected department
+const viewAllEmpDept = () => {
+    db.query('SELECT * FROM departments')
+    .then(([rows]) => {
+        let departments = rows;
+        const departmentChoices = departments.map(({ id, name }) => ({
+            name: name,
+            value: id
+        }))
+    inquirer.prompt([
+            {
+                type: 'list',
+                name: 'deptChoice',
+                message: 'Which department? (use arrow keys)',
+                choices: departmentChoices
+            }
+        ])
+        .then((res) => {
+            const sql = 'SELECT first_name, last_name FROM employees WHERE department = (?)'
+            const params = [res.deptChoice.id]
+
+            db.query(sql, params, (res) => {
+                if(err) {
+                    console.log(err);
+                }
+                console.log(' \n\ ')
+                console.table(res);
+            })
+        })
+    })
+    promptUser()
+}
 
 //display full roles table: ids, title, salary, department_id
-function viewAllRoles() {
+const viewAllRoles = () => {
     db.query(`SELECT * FROM roles`, (err, rows) => {
         if (err) {
             console.log(err)
         }
-        cTable([rows])
+        console.table([rows])
     })
     promptUser()
 }
 
 //ask user for new dept name; add to db
-function addDept() {
+const addDept = () => {
     inquirer.prompt([
         {
             type: 'input',
