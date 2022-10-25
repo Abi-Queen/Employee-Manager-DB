@@ -125,16 +125,20 @@ function addDept() {
     inquirer.prompt([
         {
             type: 'input',
-            name: 'newDept',
+            name: 'newDeptName',
             message: 'What is the name of the new department?',
-            validate: newDeptInput => {
-                if (newDeptInput) {
+            validate: newDeptNameInput => {
+                if (newDeptNameInput) {
                     return true;
                 } else {
                     console.log('A name is needed.');
                     return false;
                 }
             }
+        },
+        {
+            type: 'input',
+            name: 'newDept'
         }
     ])
     //ask user to enter manager for new dept
