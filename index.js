@@ -2,8 +2,9 @@ const inquirer = require('inquirer')
 const cTable = require('console.table')
 const db = require('./db/connection')
 
-//create a var object to list dept names in inquirer prompt
-//HELP .then notation not right choice here but how to write this?
+//create const objects to list dept names, role titles, employee names as choices in inquirer prompts
+//HELP I know .then etc isn't right; how to write these?; where to put them?
+// or use .promise().query() to create arrays for choices?
 // db.query('SELECT name FROM departments')
 // .then(([rows]) => {
 //     let deptNames = rows;
@@ -11,6 +12,17 @@ const db = require('./db/connection')
 //         name: name,
 //         value: id
 //     }));
+
+// db.query('SELECT title FROM roles')
+// .then(([rows]) => {
+//     let rowTitles = rows;
+//     const roles = roleTitles.map(({ id, title }) => ({
+//         name: title,
+//         value: id
+//     }));
+
+// db.query('SELECT first_name, last_name FROM employees') how to write?
+
 
 // main menu, ask user what they want to do in the app; if statements trigger individual functions
 const promptUser = () => {
@@ -214,9 +226,120 @@ const addRole = () => {
             }
             console.table(res)
         })
-        console.log('New role added.')
+        console.log('Role added.')
     })
     promptUser()
+}
+
+//user inputs new employee values (first_name, last_name, email, role_id); add to db
+const addEmp = () => {
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'newEmpFN',
+            message: 'Enter new employee first name.',
+            validate: newEmpFNInput => {
+                if (newEmpFNInput) {
+                    return true;
+                } else {
+                    console.log('A name is needed.');
+                    return false;
+                }
+            } 
+        },
+        {
+            type: 'input',
+            name: 'newEmpLN',
+            message: 'Enter new employee last name',
+            validate: newEmpLNInput => {
+                if (newEmpLNInput) {
+                    return true;
+                } else {
+                    console.log('A name is needed.');
+                    return false;
+                }
+            }
+        },
+        {
+            type: 'input',
+            name: 'newEmpEmail',
+            message: 'What is the email for the new employee?',
+            validate: newEmpEmailInput => {
+                if (newEmpEmailInput) {
+                    return true;
+                } else {
+                    console.log('An email is needed.');
+                    return false;
+                }
+            }
+        },
+        {
+            type: 'choice',
+            name: 'newEmpRole',
+            message: 'What is the role of the new employee? (Use arrow keys)',
+            choices: roleChoices
+        }
+    ])
+    //insert into emmployees table
+    //HELP how to get role_id rather than title???
+    .then((res) => {
+        const sql = 'INSERT INTO employees (first_name, last_name, email, role_id) VALUES (?,?,?,?)'
+        const params = [res.newEmpFN.id, res.newEmpLN.id, res.newEmpEmail.id, res.newEmpRole.id]
+        db.query(sql, params, (err, res) => {
+            if(err) {
+                console.log(err)
+            }
+            console.table(res)
+        })
+        console.log('Employee added.')
+    })
+    promptUser()
+}
+
+function updateEmpRole() {
+    //ask user to select an employee
+    //generate list of employees for inquirer prompt from employee table, save as employees
+    //HELP is this SELECT query correct?
+    inquirer.prompt([
+        {
+            type: 'list',
+            name: 'updateEmpChoice',
+            message: 'Which employee do you wish to update? (use arrow keys)',
+            choices: employees
+        },
+        {
+            type: 'list',
+            name: 'updateEmpRoleChoice',
+            message: 'What is the new role of the employee? (use arrow keys)',
+            choices: roles
+        }
+        ])
+        // .then((res) => {
+            //HELP how to get role_title vs. role_id, employee_id from fn/ln inquirer input?
+            // const sql = 'UPDATE employees SET role_title = ? WHERE employee_id = ?'
+            // const params = 
+    .then(promptUser());
+}
+
+function end() {
+    inquirer.prompt([
+        {
+            type: 'choice',
+            name: 'quit',
+            message: 'Do you wish to quit? (use arrow keys)',
+            choices: ['Yes', 'No']
+        }
+    ])
+    .then((res) => {
+        if(res.end === 'Yes')
+        {
+            promptUser()
+        }
+        else if (res.end === 'No')
+        {
+            promptUser()
+        }
+    })
 }
 
 promptUser()
