@@ -1,7 +1,7 @@
 # Employee-Manager
 
 ## Description
-This project is a Node.js application that uses command-line input to retrieve and display data from a MySQL database containing information about a team of employees.
+This project is a Node.js application that uses command-line input to view, create, update, and delete data from a MySQL database containing information about a team of employees.
 [Here is the GitHub repo.](https://github.com/Abi-Queen/Employee-Manager-DB)
 
 ## Video demo
