@@ -135,10 +135,11 @@ function viewAllEmpDept() {
         }])
     //display employees where deptartment = deptChoice
     .then(res => {
-        employees.filter(emp => emp.departments === res)
+        // employees.filter(emp => emp.departments === res)
+        // console.log('emp = ' + emp)
 
-        const sql = 'SELECT * FROM employees WHERE employees.department = ?'
-        const params = [emp]
+        const sql = 'SELECT * FROM employees WHERE employees.department = (?)'
+        const params = [res.id]
         console.log("res = " + JSON.stringify(res))
         console.log("params = " + params)
         //remove the .then that this promise is inside of?
@@ -187,8 +188,9 @@ const addDept = () => {
     //insert into departments table
     .then((res) => {
         const sql = 'INSERT INTO departments (name) VALUES (?)'
-        const params = [res.newDeptName.id]
-        console.log('params = ' + params)
+        const params = [res.newDeptName]
+        console.log('params = ' + JSON.stringify(params))
+
         db.query(sql, params, (err, res) => {
             if(err) {
                 console.log(err)
