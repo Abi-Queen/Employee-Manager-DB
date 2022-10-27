@@ -1,17 +1,30 @@
 const inquirer = require('inquirer')
 const cTable = require('console.table')
 const db = require('./db/connection')
+let departments = []
+let employees = []
 
 //create const objects to list dept names, role titles, employee names as choices in inquirer prompts
-//HELP I know .then etc isn't right; how to write these?; where to put them?
-// or use .promise().query() to create arrays for choices?
-// db.query('SELECT name FROM departments')
-// .then(([rows]) => {
-//     let deptNames = rows;
-//     const departments = deptNames.map(({ id, name }) => ({
-//         name: name,
-//         value: id
-//     }));
+db.promise().query('SELECT * FROM departments')
+.then(([rows]) => {
+    let deptNames = rows;
+    departments = deptNames.map(({ id, name }) => ({
+        name: name,
+        value: id
+    }))
+console.log("thing " + JSON.stringify(departments))})
+    
+db.promise().query('SELECT * FROM employees')
+.then(([rows]) => {
+    let employeeFNLN = rows;
+    employees = employeeFNLN.map(({ id, first_name, last_name }) => ({
+        name: first_name, last_name,
+        value: id
+    }))
+console.log("thing " + JSON.stringify(employees))})
+// add all attributes to one employees table
+// set up filters to query unique data as a string aka res just like you're already doing on departments
+// filter data objects aka employees.filter(emp => emp.first_name === res)
 
 // db.query('SELECT title FROM roles')
 // .then(([rows]) => {
@@ -97,6 +110,7 @@ const viewAllDept = () => {
 }
 
 //display full employees table: ids, first_name, last_name, email, role_id, manager_id
+// HELP how to display role title instead of id (use "AS roles.title"?)
 const viewAllEmp = () => {
     db.query('SELECT * FROM employees', (err, res) => {
         if (err) {
@@ -121,19 +135,28 @@ function viewAllEmpDept() {
         }])
     //display employees where deptartment = deptChoice
     //HELP is deptChoice the right parameter for this .then? 
-    .then((deptChoice) => {
-        const sql = 'SELECT * FROM employees WHERE department = ?'
-        const params = [res.deptChoice.id]
-
-        db.query(sql, params, (rows) => {
-            if (err) {
-                console.log(err)
-            }
-            console.table(rows)
-        })
+    .then(res => {
+        employees.filter(emp => emp.departments === res)
+       // employees = [{id: 1, first_name: luke, last_name: skywalker, department: admin}, {id: 2, first_name: donald}]
+        // id , name, departmenName, 
+        const sql = 'SELECT * FROM employees WHERE employees.role_id = ?'
+        const params = [res.deptChoice]
+        console.log("res = " + JSON.stringify(res))
+        console.log("params = " + params)
+    
+    
     })
-        .then(promptUser())
+    .then(
+    db.promise().query(sql, params, (rows) => {
+        if (err) {
+            console.log(err)
+        }
+        console.log("testing")
+        console.log(rows)
+        console.table(rows)
+    }))
 }
+//get rid of .then that the db promise is inside of; get params as global variable (let), define it there
 
 //display full roles table: ids, title, salary, department_id
 const viewAllRoles = () => {
