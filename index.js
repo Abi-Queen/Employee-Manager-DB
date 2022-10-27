@@ -22,19 +22,6 @@ db.promise().query('SELECT * FROM employees')
         value: id
     }))
 console.log("thing " + JSON.stringify(employees))})
-// add all attributes to one employees table
-// set up filters to query unique data as a string aka res just like you're already doing on departments
-// filter data objects aka employees.filter(emp => emp.first_name === res)
-
-// db.query('SELECT title FROM roles')
-// .then(([rows]) => {
-//     let rowTitles = rows;
-//     const roles = roleTitles.map(({ id, title }) => ({
-//         name: title,
-//         value: id
-//     }));
-
-// db.query('SELECT first_name, last_name FROM employees') how to write?
 
 
 // main menu, ask user what they want to do in the app; if statements trigger individual functions
@@ -53,6 +40,7 @@ const promptUser = () => {
                 'Add a role',
                 'Add an employee',
                 'Update an employee role',
+                'Remove a department',
                 'Quit'
             ]
         }
@@ -88,6 +76,10 @@ const promptUser = () => {
             else if (res.start === 'Update an employee role')
             {
                 updateEmpRole()
+            }
+            else if (res.start === 'Remove a department')
+            {
+                removeDept()
             }
             else if (res.start === 'Quit')
             {
@@ -234,14 +226,18 @@ const addRole = () => {
         {
             type: 'choice',
             name: 'newRoleDept',
-            message: 'To which department does the new role belong? (Use arrow keys)'
+            message: 'To which department does the new role belong? (Use arrow keys)',
+            choices: departments
         }
     ])
     //insert into roles table
-    //HELP how to get department id rather than name???
+    //how to get department_id INT instead of department name?
     .then((res) => {
         const sql = 'INSERT INTO roles (title, salary, department_id) VALUES (?,?,?)'
-        const params = [res.newRolesTitle.id, res.newRolesSalary.id, res.newRoleDept.id]
+        const params = [res.newRolesTitle, res.newRolesSalary, res.newRoleDept]
+        //with or without .id?
+        console.log(res.newRoleTitle.id)
+        console.log(res.newroleTitle)
         db.query(sql, params, (err, res) => {
             if(err) {
                 console.log(err)
@@ -318,7 +314,7 @@ const addEmp = () => {
     promptUser()
 }
 
-function updateEmpRole() {
+const updateEmpRole = () => {
     //ask user to select an employee
     //generate list of employees for inquirer prompt from employee table, save as employees
     //HELP is this SELECT query correct?
@@ -343,25 +339,33 @@ function updateEmpRole() {
     .then(promptUser());
 }
 
-function end() {
+const removeDept = () => {
     inquirer.prompt([
         {
             type: 'choice',
-            name: 'quit',
-            message: 'Do you wish to quit? (use arrow keys)',
-            choices: ['Yes', 'No']
+            name: 'removeDept',
+            message: 'Which department do you wish to remove? (use arrow keys)',
+            choices: departments
         }
     ])
     .then((res) => {
-        if(res.end === 'Yes')
-        {
-            promptUser()
-        }
-        else if (res.end === 'No')
-        {
-            promptUser()
-        }
+        const sql = 'DELETE FROM departments WHERE department.id = (?)'
+        const params = [res.removeDept]
+        console.log('params = ' + JSON.stringify(params))
+
+        db.query(sql, params, (err, res) => {
+            if(err) {
+                console.log(err)
+            }
+            console.table(res)
+        })
+        console.log('The department has been removed.')
     })
+    promptUser()
+}
+
+const end = () => {
+    promptUser()
 }
 
 promptUser()
