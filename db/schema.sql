@@ -4,22 +4,21 @@ name VARCHAR(30) UNIQUE NOT NULL
 );
 
 CREATE TABLE roles (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    title VARCHAR(30) UNIQUE NOT NULL,
-    salary DECIMAL NOT NULL,
-    department_id INT,
-    CONSTRAINT fk_department FOREIGN KEY (department_id) REFERENCES departments(id) ON DELETE SET NULL
+id INT AUTO_INCREMENT PRIMARY KEY,
+title VARCHAR(30) UNIQUE NOT NULL,
+salary DECIMAL NOT NULL,
+department_id INT,
+CONSTRAINT fk_department FOREIGN KEY (department_id) REFERENCES departments(id) ON DELETE SET NULL
 );
 
 CREATE TABLE employees (
-    -- HELP self-referential foreign key
-    employee_id INT AUTO_INCREMENT PRIMARY KEY,
-    first_name VARCHAR(30) NOT NULL,
-    last_name VARCHAR(30) NOT NULL,
-    email VARCHAR(50),
-    role_id INT,
-    manager_id INT,
-    CONSTRAINT fk_role FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE SET NULL
-    -- CONSTRAINT sr_fk_emp_mgr FOREIGN KEY (manager_id) REFERENCES employees(employee_id)
+employee_id INT AUTO_INCREMENT PRIMARY KEY,
+first_name VARCHAR(30) NOT NULL,
+last_name VARCHAR(30) NOT NULL,
+email VARCHAR(50),
+department VARCHAR(30),
+role_id INT,
+manager_id INT,
+CONSTRAINT fk_role FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE SET NULL
 );
 

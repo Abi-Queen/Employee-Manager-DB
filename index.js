@@ -134,29 +134,25 @@ function viewAllEmpDept() {
             choices: departments
         }])
     //display employees where deptartment = deptChoice
-    //HELP is deptChoice the right parameter for this .then? 
     .then(res => {
         employees.filter(emp => emp.departments === res)
-       // employees = [{id: 1, first_name: luke, last_name: skywalker, department: admin}, {id: 2, first_name: donald}]
-        // id , name, departmenName, 
-        const sql = 'SELECT * FROM employees WHERE employees.role_id = ?'
-        const params = [res.deptChoice]
+
+        const sql = 'SELECT * FROM employees WHERE employees.department = ?'
+        const params = [emp]
         console.log("res = " + JSON.stringify(res))
         console.log("params = " + params)
-    
-    
+        //remove the .then that this promise is inside of?
+        db.promise().query(sql, params, (rows) => {
+            if (err) {
+                console.log(err)
+            }
+            console.log("testing")
+            console.log(rows)
+            console.table(rows)
+        })
     })
-    .then(
-    db.promise().query(sql, params, (rows) => {
-        if (err) {
-            console.log(err)
-        }
-        console.log("testing")
-        console.log(rows)
-        console.table(rows)
-    }))
+    promptUser()
 }
-//get rid of .then that the db promise is inside of; get params as global variable (let), define it there
 
 //display full roles table: ids, title, salary, department_id
 const viewAllRoles = () => {
@@ -192,6 +188,7 @@ const addDept = () => {
     .then((res) => {
         const sql = 'INSERT INTO departments (name) VALUES (?)'
         const params = [res.newDeptName.id]
+        console.log('params = ' + params)
         db.query(sql, params, (err, res) => {
             if(err) {
                 console.log(err)
