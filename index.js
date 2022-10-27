@@ -2,9 +2,10 @@ const inquirer = require('inquirer')
 const cTable = require('console.table')
 const db = require('./db/connection')
 let departments = []
+let roles = []
 let employees = []
 
-//create const objects to list dept names, role titles, employee names as choices in inquirer prompts
+//create const objects to list dept names, role titles, employee everythings as choices in inquirer prompts
 db.promise().query('SELECT * FROM departments')
 .then(([rows]) => {
     let deptNames = rows;
@@ -12,16 +13,30 @@ db.promise().query('SELECT * FROM departments')
         name: name,
         value: id
     }))
-console.log("thing " + JSON.stringify(departments))})
+console.log("departments list = " + JSON.stringify(departments))})
     
-db.promise().query('SELECT * FROM employees')
+db.promise().query('SELECT * FROM roles')
 .then(([rows]) => {
-    let employeeFNLN = rows;
-    employees = employeeFNLN.map(({ id, first_name, last_name }) => ({
-        name: first_name, last_name,
+    let roleTitles = rows;
+    roles = roleTitles.map(({ id, title }) => ({
+        name: title,
         value: id
     }))
-console.log("thing " + JSON.stringify(employees))})
+console.log("roles list = " + JSON.stringify(roles))})
+
+db.promise().query('SELECT * FROM employees')
+.then(([rows]) => {
+    let employeesArray = rows;
+    employees = employeesArray.map(({ id, first_name, last_name, email, department, role_id, manager_id}) => ({
+        id: id,
+        first_name: first_name,
+        last_name: last_name,
+        email: email,
+        department: department,
+        role_id: role_id,
+        manager_id: manager_id
+    }))
+console.log("employees list = " + JSON.stringify(employees))})
 
 
 // main menu, ask user what they want to do in the app; if statements trigger individual functions
