@@ -146,7 +146,7 @@ function viewAllEmpDept() {
         // console.log('emp = ' + emp)
 
         const sql = 'SELECT * FROM employees WHERE employees.department = (?)'
-        const params = [res.id]
+        const params = [employees.filter(emp => emp.department === res.deptChoice)]
         console.log("res = " + JSON.stringify(res))
         console.log("params = " + params)
         //remove the .then that this promise is inside of?
