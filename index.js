@@ -22,7 +22,8 @@ db.promise().query('SELECT * FROM roles')
         name: title,
         value: id
     }))
-console.log("roles list = " + JSON.stringify(roles))})
+// console.log("roles list = " + JSON.stringify(roles))
+})
 
 db.promise().query('SELECT * FROM employees')
 .then(([rows]) => {
@@ -37,7 +38,6 @@ db.promise().query('SELECT * FROM employees')
         manager_id: manager_id
     }))
 console.log("employees list = " + JSON.stringify(employees))})
-
 
 // main menu, ask user what they want to do in the app; if statements trigger individual functions
 const promptUser = () => {
@@ -146,7 +146,10 @@ function viewAllEmpDept() {
         // console.log('emp = ' + emp)
 
         const sql = 'SELECT * FROM employees WHERE employees.department = (?)'
+        console.log(employees)
         const params = [employees.filter(emp => emp.department === res.deptChoice)]
+        console.log(employees[0].department)
+        console.log("string-id " + res.deptChoice)
         console.log("res = " + JSON.stringify(res))
         console.log("params = " + params)
         //remove the .then that this promise is inside of?
@@ -159,7 +162,7 @@ function viewAllEmpDept() {
             console.table(rows)
         })
     })
-    promptUser()
+    // promptUser()
 }
 
 //display full roles table: ids, title, salary, department_id
@@ -239,7 +242,7 @@ const addRole = () => {
             }
         },
         {
-            type: 'choice',
+            type: 'list',
             name: 'newRoleDept',
             message: 'To which department does the new role belong? (Use arrow keys)',
             choices: departments
@@ -249,10 +252,8 @@ const addRole = () => {
     //how to get department_id INT instead of department name?
     .then((res) => {
         const sql = 'INSERT INTO roles (title, salary, department_id) VALUES (?,?,?)'
-        const params = [res.newRolesTitle, res.newRolesSalary, res.newRoleDept]
+        const params = [res.newRoleTitle, res.newRoleSalary, res.newRoleDept]
         //with or without .id?
-        console.log(res.newRoleTitle.id)
-        console.log(res.newroleTitle)
         db.query(sql, params, (err, res) => {
             if(err) {
                 console.log(err)
@@ -261,7 +262,7 @@ const addRole = () => {
         })
         console.log('Role added.')
     })
-    promptUser()
+    // promptUser()
 }
 
 //user inputs new employee values (first_name, last_name, email, role_id); add to db
@@ -351,7 +352,6 @@ const updateEmpRole = () => {
             //HELP how to get role_title vs. role_id, employee_id from fn/ln inquirer input?
             // const sql = 'UPDATE employees SET role_title = ? WHERE employee_id = ?'
             // const params = 
-    .then(promptUser());
 }
 
 const removeDept = () => {
