@@ -209,7 +209,8 @@ const addDept = () => {
         })
         console.log('New department added.')
     })
-    promptUser()
+    // promptUser()
+    viewAllDept()
 }
 
 //ask user for new role values (title, salary, dept id); add to db
@@ -339,7 +340,7 @@ const updateEmpRole = () => {
             type: 'list',
             name: 'updateEmpChoice',
             message: 'Which employee do you wish to update? (use arrow keys)',
-            choices: employees
+            choices: viewAllEmp()
         },
         {
             type: 'list',
