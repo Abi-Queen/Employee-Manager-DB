@@ -294,10 +294,10 @@ const addEmp = () => {
             }
         },
         {
-            type: 'choice',
+            type: 'list',
             name: 'newEmpRole',
             message: 'What is the role of the new employee? (Use arrow keys)',
-            choices: roleChoices
+            choices: roles
         }
     ])
         //insert into employees table
@@ -339,13 +339,13 @@ const updateEmpRole = () => {
                 type: 'list',
                 name: 'employeeChoice',
                 message: 'Which employee do you wish to update? (use arrow keys)',
-                choices: [employees]
+                choices: employees
             },
             {
                 type: 'list',
                 name: 'updateRoleChoice',
                 message: 'What will the new role be? (use arrow keys)',
-                choices: [roles]
+                choices: roles
             }
         ])
         .then((res) => {
@@ -391,7 +391,6 @@ const removeDept = () => {
 }
 
 const end = () => {
-    promptUser()
 }
 
 promptUser()
