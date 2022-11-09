@@ -300,7 +300,7 @@ const addEmp = () => {
             choices: roleChoices
         }
     ])
-        //insert into emmployees table
+        //insert into employees table
         .then((res) => {
             const sql = 'INSERT INTO employees (first_name, last_name, email, role_id) VALUES (?,?,?,?)'
             const params = [res.newEmpFN.id, res.newEmpLN.id, res.newEmpEmail.id, res.newEmpRole.id]
@@ -326,19 +326,45 @@ const updateEmpRole = () => {
             }))
             console.log(JSON.stringify(employees))
         })
+        .then(([rows]) => {
+            let roleRows = rows
+            roles = roleRows.map(({ id, title }) => ({
+                name: `${title}`,
+                value: id
+            }))
+            console.log(JSON.stringify(roles))
+        })
+        inquirer.prompt([
+            {
+                type: 'list',
+                name: 'employeeChoice',
+                message: 'Which employee do you wish to update? (use arrow keys)',
+                choices: [employees]
+            },
+            {
+                type: 'list',
+                name: 'updateRoleChoice',
+                message: 'What will the new role be? (use arrow keys)',
+                choices: [roles]
+            }
+        ])
+        .then((res) => {
+            const sql = 'UPDATE employee SET employee.role_id = ? WHERE employee.id = ?'
+            const params = [res.employeeChoice.id, res.updateRoleChoice.id]
+            db.query(sql, params, (err, res) => {
+                if (err) {
+                    console.log(err)
+                }
+                console.table(res)
+            })
+            console.log('Employee added.')
+            promptUser()
+        })
 //run get all employees query, same thing; keep that as list so it's in the array; then update the mapped array and send it back (update db)
-    //         inquirer.prompt([
-    //             {
-    //                 type: 'list',
-    //                 name: 'employeeId',
-    //                 message: 'Which employee do you wish to update? (use arrow keys)',
-    //                 choices: employeeRows
-    //             }
-    //         ])
-            
-    //     })
-};
 
+}
+
+//REMOVE DEPARTMENT (OPTIONAL BONUS)
 const removeDept = () => {
     inquirer.prompt([
         {
