@@ -23,7 +23,7 @@ db.promise().query('SELECT * FROM roles')
             name: title,
             value: id
         }))
-        // console.log("roles list = " + JSON.stringify(roles))
+        console.log("roles list = " + JSON.stringify(roles))
     })
 
 db.promise().query('SELECT * FROM employees')
@@ -95,7 +95,7 @@ const promptUser = () => {
     })
 }
 
-//display full departments table: ids, names
+//VIEW ALL DEPARTMENTS: display full departments table: ids, names
 const viewAllDept = () => {
     db.query('SELECT * FROM departments', (err, res) => {
         if (err) {
@@ -104,12 +104,10 @@ const viewAllDept = () => {
         console.log(' \n\ ')
         console.table(res)
     })
-    console.log('Use arrow keys to select a new prompt')
     promptUser()
 }
 
-//display full employees table: ids, first_name, last_name, email, role_id, manager_id
-// HELP how to display role title instead of id (use "AS roles.title"?)
+//VIEW ALL EMPLOYEES: display full employees table: ids, first_name, last_name, email, role_id, manager_id
 const viewAllEmp = () => {
     db.query('SELECT * FROM employees', (err, res) => {
         if (err) {
@@ -118,11 +116,10 @@ const viewAllEmp = () => {
         console.log(' \n\ ')
         console.table(res)
     })
-    console.log('Use arrow keys to select a new prompt')
-    // promptUser()
+    promptUser()
 }
 
-//display employees in a selected department
+//VIEW ALL EMPLOYEES BY DEPARTMENT: display employees in a selected department
 function viewAllEmpDept() {
     //user selects dept from list of depts, save selection as deptChoice
     inquirer.prompt([
@@ -154,10 +151,9 @@ function viewAllEmpDept() {
                 console.table(rows)
             })
         })
-    // promptUser()
 }
 
-//display full roles table: ids, title, salary, department_id
+//VIEW ALL ROLES: display full roles table: ids, title, salary, department_id
 const viewAllRoles = () => {
     db.query('SELECT * FROM roles', (err, res) => {
         if (err) {
@@ -166,11 +162,10 @@ const viewAllRoles = () => {
         console.log(' \n\ ')
         console.table(res)
     })
-    console.log('Use arrow keys to select a new prompt')
     promptUser()
 }
 
-//ask user for new dept name; add to db
+//ADD DEPARTMENT: ask user for new dept name; add to db
 const addDept = () => {
     inquirer.prompt([
         {
@@ -201,11 +196,10 @@ const addDept = () => {
             })
             console.log('New department added.')
         })
-    // promptUser()
-    viewAllDept()
+    console.table(departments)
 }
 
-//ask user for new role values (title, salary, dept id); add to db
+//ADD ROLE: ask user for new role values (title, salary, dept id); add to db
 const addRole = () => {
     inquirer.prompt([
         {
@@ -242,11 +236,9 @@ const addRole = () => {
         }
     ])
         //insert into roles table
-        //how to get department_id INT instead of department name?
         .then((res) => {
             const sql = 'INSERT INTO roles (title, salary, department_id) VALUES (?,?,?)'
             const params = [res.newRoleTitle, res.newRoleSalary, res.newRoleDept]
-            //with or without .id?
             db.query(sql, params, (err, res) => {
                 if (err) {
                     console.log(err)
@@ -254,11 +246,12 @@ const addRole = () => {
                 console.table(res)
             })
             console.log('Role added.')
+            console.table(roles)
+            promptUser()
         })
-    // promptUser()
 }
 
-//user inputs new employee values (first_name, last_name, email, role_id); add to db
+//ADD EMPLOYEE: user inputs new employee values (first_name, last_name, email, role_id); add to db
 const addEmp = () => {
     inquirer.prompt([
         {
@@ -308,7 +301,6 @@ const addEmp = () => {
         }
     ])
         //insert into emmployees table
-        //HELP how to get role_id rather than title???
         .then((res) => {
             const sql = 'INSERT INTO employees (first_name, last_name, email, role_id) VALUES (?,?,?,?)'
             const params = [res.newEmpFN.id, res.newEmpLN.id, res.newEmpEmail.id, res.newEmpRole.id]
@@ -320,14 +312,11 @@ const addEmp = () => {
             })
             console.log('Employee added.')
         })
-    promptUser()
 }
 
 const updateEmpRole = () => {
-    
     //ask user to select an employee
     //generate list of employees for inquirer prompt from employee table, save as employees
-    //HELP is this SELECT query correct?
      viewAllEmp()
         .then(([rows]) => {
             let employeeRows = rows
@@ -353,7 +342,7 @@ const updateEmpRole = () => {
 const removeDept = () => {
     inquirer.prompt([
         {
-            type: 'choice',
+            type: 'list',
             name: 'removeDept',
             message: 'Which department do you wish to remove? (use arrow keys)',
             choices: departments
@@ -372,7 +361,7 @@ const removeDept = () => {
             })
             console.log('The department has been removed.')
         })
-    promptUser()
+        promptUser()
 }
 
 const end = () => {
