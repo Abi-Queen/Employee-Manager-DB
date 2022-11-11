@@ -15,58 +15,50 @@ const promptUser = () => {
                 'View all departments',
                 'View all roles',
                 'View all employees',
-                'View all employees by department',
                 'Add a department',
                 'Add a role',
                 'Add an employee',
                 'Update an employee role',
                 'Remove a department',
+                'View all employees in a department',
                 'Quit'
             ]
         }
     ]).then((res) => {
-        // switch(res.start){
-        //     case 'View all departments':
-        //         viewAllDept()
-        //         break;
-        //     case 'View all roles':
-        //         viewAllRoles()
-        //         break
-        //     default:
-        //         console.log("didnt meet and of the previous conditions")
-        // }
-        if (res.start === 'View all departments') {
-            viewAllDept()
+        switch(res.start){
+            case 'View all departments':
+                viewAllDept()
+                break;
+            case 'View all roles':
+                viewAllRoles()
+                break
+            case 'View all employees':
+                viewAllEmp()
+                break
+            case 'Add a department':
+                addDept()
+                break
+            case 'Add a role':
+                addRole()
+                break
+            case 'Add an employee':
+                addEmp()
+                break
+            case 'Update an employee role':
+                updateEmpRole()
+                break
+            case 'Remove a department':
+                removeDept()
+                break
+            case 'View all employees in a department':
+                viewAllEmpDept()
+                break
+            case 'Quit':
+                quit() 
+                break
+            default:
+                console.log("Please select a choice.")
         }
-        else if (res.start === 'View all roles') {
-            viewAllRoles()
-        }
-        else if (res.start === 'View all employees') {
-            viewAllEmp()
-        }
-        else if (res.start === 'View all employees by department') {
-            viewAllEmpDept()
-        }
-        else if (res.start === 'Add a department') {
-            addDept()
-        }
-        else if (res.start === 'Add a role') {
-            addRole()
-        }
-        else if (res.start === 'Add an employee') {
-            addEmp()
-        }
-        else if (res.start === 'Update an employee role') {
-            updateEmpRole()
-        }
-        else if (res.start === 'Remove a department') {
-            removeDept()
-        }
-        else if (res.start === 'Quit') {
-            quit()
-        }
-    })
-}
 
 //VIEW ALL DEPARTMENTS: display full departments table: ids, names
 const viewAllDept = () => {
@@ -75,9 +67,12 @@ const viewAllDept = () => {
             console.log(err)
         }
         console.log(' \n\ ')
+        console.log('=====================================')
         console.table(res)
+        console.log('=====================================')
+        console.log(' \n\ ')
+        setTimeout(promptUser(), 2000)
     })
-    promptUser()
 }
 
 //VIEW ALL EMPLOYEES: display full employees table: ids, first_name, last_name, email, role_id, manager_id
@@ -87,43 +82,12 @@ const viewAllEmp = () => {
             console.log(err)
         }
         console.log(' \n\ ')
+        console.log('=====================================')
         console.table(res)
+        console.log('=====================================')
+        console.log(' \n\ ')
+        setTimeout(promptUser(), 2000)
     })
-    promptUser()
-}
-
-//VIEW ALL EMPLOYEES BY DEPARTMENT: display employees in a selected department
-function viewAllEmpDept() {
-    //user selects dept from list of depts, save selection as deptChoice
-    inquirer.prompt([
-        {
-            type: 'list',
-            name: 'deptChoice',
-            message: 'Which department? (use arrow keys)',
-            choices: departments
-        }])
-        //display employees where deptartment = deptChoice
-        .then(res => {
-            // employees.filter(emp => emp.departments === res)
-            // console.log('emp = ' + emp)
-
-            const sql = 'SELECT * FROM employees WHERE employees.department = (?)'
-            console.log(employees)
-            const params = [employees.filter(emp => emp.department === res.deptChoice)]
-            console.log(employees[0].department)
-            console.log("string-id " + res.deptChoice)
-            console.log("res = " + JSON.stringify(res))
-            console.log("params = " + params)
-            //remove the .then that this promise is inside of?
-            db.promise().query(sql, params, (rows) => {
-                if (err) {
-                    console.log(err)
-                }
-                console.log("testing")
-                console.log(rows)
-                console.table(rows)
-            })
-        })
 }
 
 //VIEW ALL ROLES: display full roles table: ids, title, salary, department_id
@@ -168,7 +132,11 @@ const addDept = () => {
                 if (err) {
                     console.log(err)
                 }
+                console.log(' \n\ ')
+                console.log('=====================================')
                 console.log('New department added.')
+                console.log('=====================================')
+                console.log(' \n\ ')
                 setTimeout(promptUser(), 2000)
             })
         })
@@ -176,6 +144,10 @@ const addDept = () => {
 
 //ADD ROLE: ask user for new role values (title, salary, dept id); add to db
 const addRole = () => {
+    let roleDept 
+    db.promise().query('SELECT * FROM departments')
+                .then(([rows]) => {
+                roleDept = rows.map(({ name }) => name)
     inquirer.prompt([
         {
             type: 'input',
@@ -207,7 +179,7 @@ const addRole = () => {
             type: 'list',
             name: 'newRoleDept',
             message: 'To which department does the new role belong? (Use arrow keys)',
-            choices: departments
+            choices: roleDept
         }
     ])
         //insert into roles table
@@ -218,12 +190,15 @@ const addRole = () => {
                 if (err) {
                     console.log(err)
                 }
-                console.table(res)
+                console.log(' \n\ ')
+                console.log('=====================================')
+                console.log('New role added.')
+                console.log('=====================================')
+                console.log(' \n\ ')
+                setTimeout(promptUser(), 2000)
             })
-            console.log('Role added.')
-            console.table(roles)
-            promptUser()
         })
+    })
 }
 
 //ADD EMPLOYEE: user inputs new employee values (first_name, last_name, email, role_id); add to db
@@ -373,7 +348,7 @@ const updateEmpRole = () => {
                 })
         }
 
-//REMOVE DEPARTMENT (OPTIONAL BONUS)
+// *BONUS* REMOVE DEPARTMENT
 const removeDept = () => {
     let deptChoices 
     db.promise().query('SELECT * FROM departments')
@@ -404,8 +379,49 @@ const removeDept = () => {
     })
 }
 
+//*BONUS* VIEW ALL EMPLOYEES BY DEPARTMENT: display employees in a selected department
+function viewAllEmpDept() {
+    let byDeptChoice
+    //user selects dept from list of depts, save selection as deptChoice
+    db.promise().query('SELECT * FROM departments')
+    .then(([rows]) => {
+    byDeptChoice = rows.map(({ name }) => name)
+    inquirer.prompt([
+        {
+            type: 'list',
+            name: 'deptChoice',
+            message: 'Which department? (use arrow keys)',
+            choices: byDeptChoice
+        }])
+        //display employees where deptartment = deptChoice
+        .then(res => {
+            const sql = 'SELECT * FROM employees WHERE employees.department = (?)'
+            const params = [res.byDeptChoice]
+            // console.log(employees[0].department)
+            // console.log("string-id " + res.deptChoice)
+            // console.log("res = " + JSON.stringify(res))
+            // console.log("params = " + params)
+            db.promise().query(sql, params, (rows) => {
+                if (err) {
+                    console.log(err)
+                }
+                console.log(' \n\ ')
+                console.log('=====================================')
+                console.table(res)
+                console.log('=====================================')
+                console.log(' \n\ ')
+                setTimeout(promptUser(), 2000)
+            })
+        })
+    })
+}
+
+// quit by returning to main prompt 
 const end = () => {
     promptUser()
+}
+
+    })
 }
 
 promptUser()
