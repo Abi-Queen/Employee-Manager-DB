@@ -105,7 +105,7 @@ const viewAllRoles = () => {
         console.log('=====================================')
         console.log(' \n\ ')
     })
-    setTimeout(promptUser, 2000)
+    setTimeout(promptUser(), 2000)
 }
 
 //ADD DEPARTMENT: ask user for new dept name; add to db
@@ -147,7 +147,14 @@ const addDept = () => {
 
 //ADD ROLE: ask user for new role values (title, salary, dept id); add to db
 const addRole = () => {
-    let roleDept 
+    let roleDept
+    db.promise().query('SELECT * FROM departments')
+    .then(([rows]) => {
+        let deptNames = rows;
+        roleDept = deptNames.map(({ id, name }) => ({
+            name: name,
+            value: id
+        }))
     db.promise().query('SELECT * FROM departments')
                 .then(([rows]) => {
                 roleDept = rows.map(({ name }) => name)
@@ -202,6 +209,7 @@ const addRole = () => {
             })
         })
     })
+    })
 }
 
 //ADD EMPLOYEE: user inputs new employee values (first_name, last_name, email, role_id); add to db
@@ -216,8 +224,8 @@ const addEmp = () => {
                 value: id
             }))
             db.promise().query('SELECT * FROM departments')
-                .then(([rows]) => {
-                deptNames = rows.map(({ name }) => name)
+            .then(([rows]) => {
+            deptNames = rows.map(({ name }) => name)
                 db.promise().query('SELECT * FROM employees')
                 .then(([rows]) => {
                     let employeeRows = rows
@@ -420,7 +428,7 @@ function viewAllEmpDept() {
 }
 
 // quit by returning to main prompt 
-const end = () => {
+const quit = () => {
     promptUser()
 }
 
