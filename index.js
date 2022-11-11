@@ -28,7 +28,7 @@ const promptUser = () => {
         switch(res.start){
             case 'View all departments':
                 viewAllDept()
-                break;
+                break
             case 'View all roles':
                 viewAllRoles()
                 break
@@ -59,6 +59,9 @@ const promptUser = () => {
             default:
                 console.log("Please select a choice.")
         }
+    })
+}
+
 
 //VIEW ALL DEPARTMENTS: display full departments table: ids, names
 const viewAllDept = () => {
@@ -71,8 +74,8 @@ const viewAllDept = () => {
         console.table(res)
         console.log('=====================================')
         console.log(' \n\ ')
-        setTimeout(promptUser(), 2000)
     })
+    setTimeout(promptUser(), 2000)
 }
 
 //VIEW ALL EMPLOYEES: display full employees table: ids, first_name, last_name, email, role_id, manager_id
@@ -86,8 +89,8 @@ const viewAllEmp = () => {
         console.table(res)
         console.log('=====================================')
         console.log(' \n\ ')
-        setTimeout(promptUser(), 2000)
     })
+    setTimeout(promptUser(), 2000)
 }
 
 //VIEW ALL ROLES: display full roles table: ids, title, salary, department_id
@@ -101,8 +104,8 @@ const viewAllRoles = () => {
         console.table(res)
         console.log('=====================================')
         console.log(' \n\ ')
-        setTimeout(promptUser(), 2000)
     })
+    setTimeout(promptUser, 2000)
 }
 
 //ADD DEPARTMENT: ask user for new dept name; add to db
@@ -137,9 +140,9 @@ const addDept = () => {
                 console.log('New department added.')
                 console.log('=====================================')
                 console.log(' \n\ ')
-                setTimeout(promptUser(), 2000)
             })
         })
+        setTimeout(promptUser(), 2000)
 }
 
 //ADD ROLE: ask user for new role values (title, salary, dept id); add to db
@@ -419,9 +422,6 @@ function viewAllEmpDept() {
 // quit by returning to main prompt 
 const end = () => {
     promptUser()
-}
-
-    })
 }
 
 promptUser()
