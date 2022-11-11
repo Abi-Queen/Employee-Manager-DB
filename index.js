@@ -264,9 +264,9 @@ const addRole = () => {
 
 //ADD EMPLOYEE: user inputs new employee values (first_name, last_name, email, role_id); add to db
 const addEmp = () => {
-    let roleTitles;
-    let deptNames;
-    let mgrNames;
+    let roleTitles
+    let deptNames
+    // let mgrNames
     db.promise().query('SELECT * FROM roles')
         .then(([roles]) => {
             roleTitles = roles.map(({ id, title }) => ({
@@ -276,10 +276,11 @@ const addEmp = () => {
             db.promise().query('SELECT * FROM departments')
                 .then(([rows]) => {
                 deptNames = rows.map(({ name }) => name)
-                        db.promise().query('SELECT * FROM employees')
-                            .then(([names]) => {
-                            mgrNames = names.map(({ first_name }) => first_name)
-                    inquirer.prompt([
+                        // db.promise().query('SELECT * FROM employees')
+                        //     .then(([names]) => {
+                        //     mgrNames = names.map(({ first_name }) => first_name)
+                    
+                        inquirer.prompt([
                         {
                             type: 'input',
                             name: 'newEmpFN',
@@ -330,18 +331,18 @@ const addEmp = () => {
                             name: 'newEmpDept',
                             message: 'To which department does the new employee belong? (Use arrow keys)',
                             choices: deptNames
-                        },
-                        {
-                            type: 'list',
-                            name: 'newEmpManager',
-                            message: 'Who is the manager of the new employee? (Use arrow keys)',
-                            choices: mgrNames
                         }
+                        // {
+                        //     type: 'list',
+                        //     name: 'newEmpManager',
+                        //     message: 'Who is the manager of the new employee? (Use arrow keys)',
+                        //     choices: mgrNames
+                        // }
                     ])
                         //insert into employees table
                         .then((res) => {
-                            const sql = 'INSERT INTO employees (first_name, last_name, email, role_id) VALUES (?,?,?,?,?,?)'
-                            const params = [res.newEmpFN, res.newEmpLN, res.newEmpEmail, res.newEmpRole, res.newEmpDept, res.newEmpManager]
+                            const sql = 'INSERT INTO employees (first_name, last_name, email, department, role_id) VALUES (?,?,?,?,?)'
+                            const params = [res.newEmpFN, res.newEmpLN, res.newEmpEmail, res.newEmpDept, res.newEmpRole]
                             db.query(sql, params, (err, res) => {
                                 if (err) {
                                     console.log(err)
@@ -353,59 +354,118 @@ const addEmp = () => {
                         })
                 })
         })
-    })
-
 }
 
 const updateEmpRole = () => {
-    //ask user to select an employee
-    //generate list of employees for inquirer prompt from employee table, save as employees
-    viewAllEmp()
-        .then(([rows]) => {
-            let employeeRows = rows
-            employees = employeeRows.map(({ id, first_name, last_name }) => ({
-                name: `${first_name} ${last_name}`,
+    let roleTitles
+    db.promise().query('SELECT * FROM employees')
+    .then(([rows]) => {
+        let employeeRows = rows
+        employees = employeeRows.map(({ id, first_name, last_name }) => ({
+            name: `${first_name} ${last_name}`,
+            value: id
+        }))
+        console.log(JSON.stringify(employees))
+    db.promise().query('SELECT * FROM roles')
+        .then(([roles]) => {
+            roleTitles = roles.map(({ id, title }) => ({
+                name: title,
                 value: id
             }))
-            console.log(JSON.stringify(employees))
+                    inquirer.prompt([
+                        {
+                            type: 'list',
+                            name: 'updateEmpChoice',
+                            message: 'Which employee do you wish to update? (Use arrow keys)',
+                            choices: employees
+                        },
+                        {
+                            type: 'list',
+                            name: 'updateEmpRole',
+                            message: 'What is the new role? (Use arrow keys)',
+                            choices: roleTitles
+                        }
+                    ])
+                    //update mysql employees table with new role
+                        .then((res) => {
+                            const sql = 'INSERT INTO employees (first_name, last_name, email, department, role_id) VALUES (?,?,?,?,?)'
+                            const params = [res.newEmpFN, res.newEmpLN, res.newEmpEmail, res.newEmpDept, res.newEmpRole]
+                            db.query(sql, params, (err, res) => {
+                                if (err) {
+                                    console.log(err)
+                                }
+                                console.table(res)
+                                console.log('New employee added.')
+                                setTimeout(promptUser(), 2000)
+                                .then((res) => {
+                                    const sql = 'UPDATE employee SET employee.role_id = ? WHERE employee.id = ?'
+                                    const params = [res.employeeChoice.id, res.updateRoleChoice.id]
+                                    db.query(sql, params, (err, res) => {
+                                        if (err) {
+                                            console.log(err)
+                                        }
+                                        console.table(res)
+                                        console.log('New employee added.')
+                                        setTimeout(promptUser(), 2000)
+                                    })
+                                })
+                            })
+                        })
+                })
         })
-        .then(([rows]) => {
-            let roleRows = rows
-            roles = roleRows.map(({ id, title }) => ({
-                name: `${title}`,
-                value: id
-            }))
-            console.log(JSON.stringify(roles))
-        })
-    inquirer.prompt([
-        {
-            type: 'list',
-            name: 'employeeChoice',
-            message: 'Which employee do you wish to update? (use arrow keys)',
-            choices: employees
-        },
-        {
-            type: 'list',
-            name: 'updateRoleChoice',
-            message: 'What will the new role be? (use arrow keys)',
-            choices: roles
-        }
-    ])
-        .then((res) => {
-            const sql = 'UPDATE employee SET employee.role_id = ? WHERE employee.id = ?'
-            const params = [res.employeeChoice.id, res.updateRoleChoice.id]
-            db.query(sql, params, (err, res) => {
-                if (err) {
-                    console.log(err)
-                }
-                console.table(res)
-                console.log('New employee added.')
-                setTimeout(promptUser(), 2000)
-            })
-        })
-    //run get all employees query, same thing; keep that as list so it's in the array; then update the mapped array and send it back (update db)
-
 }
+
+
+
+// const updateEmpRole = () => {
+//     //ask user to select an employee
+//     //generate list of employees for inquirer prompt from employee table, save as employees
+//     viewAllEmp()
+//         .then(([rows]) => {
+//             let employeeRows = rows
+//             employees = employeeRows.map(({ id, first_name, last_name }) => ({
+//                 name: `${first_name} ${last_name}`,
+//                 value: id
+//             }))
+//             console.log(JSON.stringify(employees))
+//         })
+//         .then(([rows]) => {
+//             let roleRows = rows
+//             roles = roleRows.map(({ id, title }) => ({
+//                 name: `${title}`,
+//                 value: id
+//             }))
+//             console.log(JSON.stringify(roles))
+//         })
+//     inquirer.prompt([
+//         {
+//             type: 'list',
+//             name: 'employeeChoice',
+//             message: 'Which employee do you wish to update? (use arrow keys)',
+//             choices: employees
+//         },
+//         {
+//             type: 'list',
+//             name: 'updateRoleChoice',
+//             message: 'What will the new role be? (use arrow keys)',
+//             choices: roles
+//         }
+//     ])
+//         .then((res) => {
+//             const sql = 'UPDATE employee SET employee.role_id = ? WHERE employee.id = ?'
+//             const params = [res.employeeChoice.id, res.updateRoleChoice.id]
+//             db.query(sql, params, (err, res) => {
+//                 if (err) {
+//                     console.log(err)
+//                 }
+//                 console.table(res)
+//                 console.log('New employee added.')
+//                 setTimeout(promptUser(), 2000)
+//             })
+//         })
+//     //run get all employees query, same thing; keep that as list so it's in the array; then update the mapped array and send it back (update db)
+
+// }
 
 //REMOVE DEPARTMENT (OPTIONAL BONUS)
 const removeDept = () => {
