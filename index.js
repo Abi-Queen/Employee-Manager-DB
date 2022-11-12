@@ -141,8 +141,8 @@ const addDept = () => {
                 console.log('=====================================')
                 console.log(' \n\ ')
             })
+            setTimeout(promptUser(), 2000)
         })
-        setTimeout(promptUser(), 2000)
 }
 
 //ADD ROLE: ask user for new role values (title, salary, dept id); add to db
@@ -204,8 +204,8 @@ const addRole = () => {
                 console.log('New role added.')
                 console.log('=====================================')
                 console.log(' \n\ ')
-                setTimeout(promptUser(), 2000)
             })
+            setTimeout(promptUser(), 2000)
         })
     })
 }
@@ -298,10 +298,13 @@ const addEmp = () => {
                                 if (err) {
                                     console.log(err)
                                 }
-                                // console.table(res)
-                                console.log('New employee added.')
-                                setTimeout(promptUser(), 2000)
+                                console.log(' \n\ ')
+                                console.log('=====================================')
+                                console.log('New role added.')
+                                console.log('=====================================')
+                                console.log(' \n\ ')
                             })
+                            setTimeout(promptUser(), 2000)
                         })
                 })
         })
@@ -347,10 +350,13 @@ const updateEmpRole = () => {
                                 if (err) {
                                     console.log(err)
                                 }
-                                console.table(res)
-                                console.log('Employee role udpated.')
-                                setTimeout(promptUser(), 2000)
+                                console.log(' \n\ ')
+                                console.log('=====================================')
+                                console.log('Employee role updated.')
+                                console.log('=====================================')
+                                console.log(' \n\ ')
                             })
+                            setTimeout(promptUser(), 2000)
                         })
                     })
                 })
@@ -418,8 +424,8 @@ function viewAllEmpDept() {
                 console.table(res)
                 console.log('=====================================')
                 console.log(' \n\ ')
-                setTimeout(promptUser(), 2000)
             })
+            setTimeout(promptUser(), 2000)
         })
     })
 }
