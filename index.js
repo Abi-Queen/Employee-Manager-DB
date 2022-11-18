@@ -21,7 +21,7 @@ const promptUser = () => {
                 'Update an employee role',
                 'Remove a department',
                 'Remove an employee',
-                'View all employees in a department',
+                // 'View all employees in a department',
                 'Quit'
             ]
         }
@@ -232,7 +232,6 @@ const addEmp = () => {
                         name: `${first_name} ${last_name}`,
                         value: manager_id
                     }))
-                    console.log(JSON.stringify(mgrNames))
                         inquirer.prompt([
                         {
                             type: 'input',
@@ -384,7 +383,6 @@ const removeDept = () => {
         .then((res) => {
             const sql = 'DELETE FROM departments WHERE name = (?)'
             const params = [res.removeDept]
-            console.log('params = ' + JSON.stringify(params))
 
             db.query(sql, params, (err, res) => {
                 if (err) {
@@ -424,7 +422,6 @@ const removeEmp = () => {
         .then((res) => {
             const sql = 'DELETE FROM employees WHERE employee_id = (?)'
             const params = [res.removeEmp]
-            console.log('params = ' + JSON.stringify(params))
 
             db.query(sql, params, (err, res) => {
                 if (err) {
@@ -444,11 +441,11 @@ const removeEmp = () => {
 
 //*BONUS* VIEW ALL EMPLOYEES BY DEPARTMENT: display employees in a selected department
 function viewAllEmpDept() {
-    let byDeptChoice
     //user selects dept from list of depts, save selection as deptChoice
+    let byDeptChoice
     db.promise().query('SELECT * FROM departments')
-    .then(([rows]) => {
-    byDeptChoice = rows.map(({ name }) => name)
+        .then(([rows]) => {
+        byDeptChoice = rows.map(({ name }) => name)
     inquirer.prompt([
         {
             type: 'list',
@@ -456,15 +453,11 @@ function viewAllEmpDept() {
             message: 'Which department? (use arrow keys)',
             choices: byDeptChoice
         }])
-        //display employees where deptartment = deptChoice
+        //display employees where deptartment = byDeptChoice
         .then(res => {
-            const sql = 'SELECT * FROM employees WHERE employees.department = (?)'
-            const params = [res.byDeptChoice]
-            // console.log(employees[0].department)
-            // console.log("string-id " + res.deptChoice)
-            // console.log("res = " + JSON.stringify(res))
-            // console.log("params = " + params)
-            db.promise().query(sql, params, (rows) => {
+            const sql = 'SELECT * FROM employees WHERE department = ?'
+            const params = [res.deptChoice]
+            db.promise().query(sql, params, (err, res) => {
                 if (err) {
                     console.log(err)
                 }
