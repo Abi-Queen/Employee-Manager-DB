@@ -20,6 +20,7 @@ const promptUser = () => {
                 'Add an employee',
                 'Update an employee role',
                 'Remove a department',
+                'Remove an employee',
                 'View all employees in a department',
                 'Quit'
             ]
@@ -49,6 +50,9 @@ const promptUser = () => {
                 break
             case 'Remove a department':
                 removeDept()
+                break
+            case 'Remove an employee':
+                removeEmp()
                 break
             case 'View all employees in a department':
                 viewAllEmpDept()
@@ -151,15 +155,9 @@ const addRole = () => {
     .then(([rows]) => {
         let deptNames = rows;
         departments = deptNames.map(({ id, name }) => ({
-            name: name,
+            name: `${name}`,
             value: id
         }))
-
-//displaying in prompt but prob w/ department_id
-        // db.promise().query('SELECT * FROM departments')
-        // .then(([rows]) => {
-        // deptNames = rows.map(({ name }) => name)
-
     inquirer.prompt([
         {
             type: 'input',
@@ -191,7 +189,7 @@ const addRole = () => {
             type: 'list',
             name: 'newRoleDept',
             message: 'To which department does the new role belong? (Use arrow keys)',
-            choices: deptNames
+            choices: departments
         }
     ])
         //insert into roles table
@@ -301,15 +299,18 @@ const addEmp = () => {
                                 if (err) {
                                     console.log(err)
                                 }
-                                // console.table(res)
-                                console.log('New employee added.')
-                                setTimeout(promptUser(), 2000)
+                                console.log(' \n\ ')
+                                console.log('=====================================')
+                                console.log('Employee added.')
+                                console.log('=====================================')
+                                console.log(' \n\ ')
+                            })
+                            setTimeout(promptUser(), 2000) 
                             })
                         })
                 })
         })
-    })
-}
+    }
 
 // *BONUS* REMOVE DEPARTMENT
 const removeDept = () => {
@@ -335,12 +336,56 @@ const removeDept = () => {
                     console.log(err)
                 }
                 console.table(res)
-            })
-            console.log('The department has been removed.')
+                console.log(' \n\ ')
+                console.log('=====================================')
+                console.log('Department removed.')
+                console.log('=====================================')
+                console.log(' \n\ ')
+                })
             setTimeout(promptUser(), 2000)
+            })
         })
-    })
-}
+   }
+
+
+// *BONUS* REMOVE EMPLOYEE
+const removeEmp = () => {
+    let empNames 
+    db.promise().query('SELECT * FROM employees')
+    .then(([rows]) => {
+        let employeeRows = rows
+        empNames = employeeRows.map(({ employee_id, first_name, last_name }) => ({
+            name: `${first_name} ${last_name}`,
+            value: employee_id
+        }))
+    inquirer.prompt([
+        {
+            type: 'list',
+            name: 'removeEmp',
+            message: 'Which employee do you wish to remove? (use arrow keys)',
+            choices: empNames
+        }
+    ])
+        .then((res) => {
+            const sql = 'DELETE FROM employees WHERE employee_id = (?)'
+            const params = [res.removeEmp]
+            console.log('params = ' + JSON.stringify(params))
+
+            db.query(sql, params, (err, res) => {
+                if (err) {
+                    console.log(err)
+                }
+                console.table(res)
+                console.log(' \n\ ')
+                console.log('=====================================')
+                console.log('Employee removed.')
+                console.log('=====================================')
+                console.log(' \n\ ')
+            })
+            setTimeout(promptUser(), 2000)
+            })
+        })
+    }
 
 //*BONUS* VIEW ALL EMPLOYEES BY DEPARTMENT: display employees in a selected department
 function viewAllEmpDept() {
@@ -381,7 +426,7 @@ function viewAllEmpDept() {
 
 // quit by returning to main prompt 
 const quit = () => {
-    promptUser()
+    console.log('Goodbye.')
 }
 
 promptUser()
