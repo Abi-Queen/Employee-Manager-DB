@@ -211,6 +211,7 @@ const addRole = () => {
     })
 }
 
+// ADD EMPLOYEE
 const addEmp = () => {
     let roleTitles
     let deptNames
@@ -311,6 +312,60 @@ const addEmp = () => {
                 })
         })
     }
+
+// UPDATE EMPLOYEE ROLE
+const updateEmpRole = () => {
+    //generate list of employees for inquirer prompt from employee table, save as updateEmpChoices
+    let updateEmpChoices 
+    let updateEmpNewRole
+    db.promise().query('SELECT * FROM employees')
+        .then(([rows]) => {
+            let employeeRows = rows
+            updateEmpChoices = employeeRows.map(({ employee_id, first_name, last_name }) => ({
+                name: `${first_name} ${last_name}`,
+                value: employee_id
+            }))
+            //generate list of roles for inquirer prompt from roles table, save as updateEmpNewRole
+            db.promise().query('SELECT * FROM roles')
+                .then(([roles]) => {
+                updateEmpNewRole = roles.map(({ id, title }) => ({
+                    name: title,
+                    value: id
+                }))
+    //ask user to select an employee
+    inquirer.prompt([
+        {
+            type: 'list',
+            name: 'updateEmpChoice',
+            message: 'Which employee do you wish to update? (use arrow keys)',
+            choices: updateEmpChoices
+        },
+        //ask user to select new role
+        {
+            type: 'list',
+            name: 'updateRoleChoice',
+            message: 'What will the new role be? (use arrow keys)',
+            choices: updateEmpNewRole
+        }
+    ])
+        .then((res) => {
+            const sql = 'UPDATE employees SET employees.role_id = ? WHERE employee_id = ?'
+            const params = [res.updateRoleChoice, res.updateEmpChoice]
+            db.query(sql, params, (err, res) => {
+                if (err) {
+                    console.log(err)
+                }
+                console.log(' \n\ ')
+                console.log('=====================================')
+                console.log('Employee role updated.')
+                console.log('=====================================')
+                console.log(' \n\ ')
+            })
+            setTimeout(promptUser(), 2000)
+            })
+        })
+    })
+}
 
 // *BONUS* REMOVE DEPARTMENT
 const removeDept = () => {
