@@ -147,16 +147,19 @@ const addDept = () => {
 
 //ADD ROLE: ask user for new role values (title, salary, dept id); add to db
 const addRole = () => {
-    // db.promise().query('SELECT * FROM departments')
-    // .then(([rows]) => {
-    //     let deptNames = rows;
-    //     roleDept = deptNames.map(({ id, name }) => ({
-    //         name: name,
-    //         value: id
-    //     }))
-        db.promise().query('SELECT * FROM departments')
-        .then(([rows]) => {
-        deptNames = rows.map(({ name }) => name)
+    db.promise().query('SELECT * FROM departments')
+    .then(([rows]) => {
+        let deptNames = rows;
+        departments = deptNames.map(({ id, name }) => ({
+            name: name,
+            value: id
+        }))
+
+//displaying in prompt but prob w/ department_id
+        // db.promise().query('SELECT * FROM departments')
+        // .then(([rows]) => {
+        // deptNames = rows.map(({ name }) => name)
+
     inquirer.prompt([
         {
             type: 'input',
@@ -210,7 +213,6 @@ const addRole = () => {
     })
 }
 
-//ADD EMPLOYEE: user inputs new employee values (first_name, last_name, email, role_id); add to db
 const addEmp = () => {
     let roleTitles
     let deptNames
@@ -222,13 +224,14 @@ const addEmp = () => {
                 value: id
             }))
             db.promise().query('SELECT * FROM departments')
-            .then(([rows]) => {
-            deptNames = rows.map(({ name }) => name)
+                .then(([rows]) => {
+                deptNames = rows.map(({ name }) => name)
                 db.promise().query('SELECT * FROM employees')
                 .then(([rows]) => {
-                    mgrNames = rows.map(({ id, first_name, last_name }) => ({
+                    let employeeRows = rows
+                    mgrNames = employeeRows.map(({ manager_id, first_name, last_name }) => ({
                         name: `${first_name} ${last_name}`,
-                        value: id
+                        value: manager_id
                     }))
                     console.log(JSON.stringify(mgrNames))
                         inquirer.prompt([
@@ -293,74 +296,20 @@ const addEmp = () => {
                         //insert into employees table
                         .then((res) => {
                             const sql = 'INSERT INTO employees (first_name, last_name, email, department, role_id, manager_id) VALUES (?,?,?,?,?,?)'
-                            const params = [res.newEmpFN, res.newEmpLN, res.newEmpEmail, res.newEmpRole, res.newEmpDept, res.newEmpManager]
+                            const params = [res.newEmpFN, res.newEmpLN, res.newEmpEmail, res.newEmpDept, res.newEmpRole, res.newEmpManager]
                             db.query(sql, params, (err, res) => {
                                 if (err) {
                                     console.log(err)
                                 }
-                                console.log(' \n\ ')
-                                console.log('=====================================')
-                                console.log('New role added.')
-                                console.log('=====================================')
-                                console.log(' \n\ ')
+                                // console.table(res)
+                                console.log('New employee added.')
+                                setTimeout(promptUser(), 2000)
                             })
-                            setTimeout(promptUser(), 2000)
                         })
                 })
         })
     })
 }
-
-const updateEmpRole = () => {
-    let roleTitles
-    let empName
-    db.promise().query('SELECT * FROM employees')
-        .then(([rows]) => {
-            let employeeRows = rows
-            empName = employeeRows.map(({ id, first_name, last_name }) => ({
-                name: `${first_name} ${last_name}`,
-                value: id
-            }))
-            console.log(JSON.stringify(empName))
-    db.promise().query('SELECT * FROM roles')
-        .then(([roles]) => {
-            roleTitles = roles.map(({ id, title }) => ({
-                name: title,
-                value: id
-            }))
-                    inquirer.prompt([
-                        {
-                            type: 'list',
-                            name: 'updateEmpChoice',
-                            message: 'Which employee do you wish to update? (Use arrow keys)',
-                            choices: empName
-                        },
-                        {
-                            type: 'list',
-                            name: 'updateEmpRole',
-                            message: 'What is the new role? (Use arrow keys)',
-                            choices: roleTitles
-                        }
-                    ])
-                    //update mysql employees table with new role
-                        .then((res) => {
-                            const sql = 'UPDATE employees SET employees.role_id = ? WHERE employee_id = ?'
-                            const params = [res.updateEmpChoice, res.updateEmpRole]
-                            db.query(sql, params, (err, res) => {
-                                if (err) {
-                                    console.log(err)
-                                }
-                                console.log(' \n\ ')
-                                console.log('=====================================')
-                                console.log('Employee role updated.')
-                                console.log('=====================================')
-                                console.log(' \n\ ')
-                            })
-                            setTimeout(promptUser(), 2000)
-                        })
-                    })
-                })
-        }
 
 // *BONUS* REMOVE DEPARTMENT
 const removeDept = () => {
