@@ -326,7 +326,7 @@ const removeDept = () => {
         }
     ])
         .then((res) => {
-            const sql = 'DELETE FROM departments WHERE department.id = (?)'
+            const sql = 'DELETE FROM departments WHERE name = (?)'
             const params = [res.removeDept]
             console.log('params = ' + JSON.stringify(params))
 
